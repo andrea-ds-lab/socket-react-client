@@ -1,0 +1,63 @@
+/* theme.css */
+
+/* Base colors */
+:root {
+  --background-color: #2E3532;
+  --text-color: #E0E2DB;
+  --highlight-color: #8B2635;
+}
+
+/* Apply theme colors */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  /* Optional: Define a base font */
+  margin: 0;
+  padding: 0;
+}
+
+/* Example for headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-color);
+}
+
+/* Example for links */
+a {
+  color: var(--highlight-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Example for buttons */
+button {
+  background-color: var(--highlight-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: darken(var(--highlight-color), 10%);
+}
+
+/* Example for containers */
+.container {
+  padding: 20px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Example for highlighted elements */
+.highlight {
+  color: var(--highlight-color);
+}
