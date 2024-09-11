@@ -25,7 +25,7 @@ export function Message({ message, timestamp, isSentByUser, username }: MessageP
       alignItems: 'center', // Align items vertically in the center
       justifyContent: isSentByUser ? 'flex-end' : 'flex-start',
       marginBottom: '1rem',
-      position: 'relative' // Position relative for time positioning
+      position: 'relative',
     }}>
       {!isSentByUser && (
         <div style={{
@@ -46,7 +46,6 @@ export function Message({ message, timestamp, isSentByUser, username }: MessageP
       )}
       <div style={{
         maxWidth: '60%',
-        padding: '0.5rem',
         borderRadius: '0.5rem',
         backgroundColor: isSentByUser ? 'var(--chat-message-bg-light)' : 'var(--chat-message-bg-dark)',
         boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
@@ -54,7 +53,7 @@ export function Message({ message, timestamp, isSentByUser, username }: MessageP
         fontSize: '1rem',
         wordWrap: 'break-word',
         position: 'relative',
-        paddingBottom: '1.5rem' // Add extra space at the bottom for time
+        padding: "0.5rem 1rem 1.5rem 0.5rem",
       }}>
         {message}
         <div style={{
