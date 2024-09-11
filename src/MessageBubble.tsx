@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface MessageBubbleProps {
   message: string;
   isSentByUser: boolean;
@@ -39,9 +37,9 @@ export function MessageBubble({ message, isSentByUser, username }: MessageBubble
         maxWidth: '60%',
         padding: '0.5rem',
         borderRadius: '0.5rem',
-        backgroundColor: isSentByUser ? '#DCF8C6' : '#FFF',
+        backgroundColor: isSentByUser ? 'var(--chat-message-bg-light)' : 'var(--chat-message-bg-dark)',
         boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
-        color: '#333',
+        color: '#fff',
         fontSize: '1rem',
         wordWrap: 'break-word',
       }}>

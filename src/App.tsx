@@ -10,8 +10,8 @@ function App() {
   };
 
   return (
-    <>
-      <div>
+    <div style={{ padding: "2rem", display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", gap: 10 }}>
         <label htmlFor="username">Enter your username:</label>
         <input
           id="username"
@@ -21,10 +21,9 @@ function App() {
           placeholder="Enter username"
         />
       </div>
-      <h1>Vite + React</h1>
+      <hr style={{ width: "100%" }} />
       <ChatComponent username={username} />
-
-    </>
+    </div >
   )
 }
 

@@ -1,7 +1,12 @@
-import { useEffect, useState, KeyboardEvent } from "react";
+import { useEffect, useState, KeyboardEvent, MouseEvent } from "react";
 import socket from "./socket";  // Ensure the correct path to your socket.js file
 import './css/theme.css';  // Import the theme.css file
 import MessageBubble from "./MessageBubble";
+import RoundedInput from "./RountedTextField";
+import IconButton from "./IconButton";
+import { WorkspacePremium } from "@mui/icons-material";
+import ChatDisplay from "./ChatDisplay";
+import OffsetContainer from "./OffsetContainer";
 
 // Interface to define the type of channel object
 interface Channel {
@@ -77,8 +82,14 @@ export function ChatComponent({ username }: ChatComponentProps) {
     }
   };
 
+  const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    console.log("Click");
+    // You can handle async operations here
+  };
+
   return (
-    <div style={{ padding: "2rem", display: "flex", flexDirection: "column" }}>
+    <div >
+      <h1>Test chat</h1>
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <p>Connected to channel:</p>
         <b>{channelName}</b>
@@ -92,23 +103,25 @@ export function ChatComponent({ username }: ChatComponentProps) {
         />
         <button style={{ height: "2rem" }} onClick={handleChannelChange}>Set channel</button>
       </div>
-      <div style={{ maxHeight: "30dvh", flex: 1, overflowY: "hidden" }}>
-        {messages.slice().reverse().map((msg, index) => {
-          console.log(msg.message, username);
-          return <MessageBubble key={index} message={msg.message} isSentByUser={msg.username === username} username={username} />
-        })}
-      </div>
+      <OffsetContainer >
+        <ChatDisplay messages={messages} username={username} />
+      </OffsetContainer>
       <div>
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-          style={{ marginRight: "1rem" }}
-        />
-        <button onClick={sendMessage}>Send</button>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <IconButton icon={<WorkspacePremium />} onClick={handleClick} />
+          <div style={{
+            background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", gap: 10
+          }}>
+            <RoundedInput
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a message..."
+            />
+            <div className="rounded-button" onClick={sendMessage}>Send</div>
+          </div>
+        </div>
       </div>
-    </div>
+    </div >
   );
 }
