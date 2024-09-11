@@ -1,20 +1,31 @@
-interface MessageBubbleProps {
+interface MessageProps {
   message: string;
+  timestamp: number; // Added timestamp for time display
   isSentByUser: boolean;
-  username: string
+  username: string;
 }
 
-export function MessageBubble({ message, isSentByUser, username }: MessageBubbleProps) {
-
-  // Extract the first letter of the message
+export function Message({ message, timestamp, isSentByUser, username }: MessageProps) {
+  // Extract the first letter of the username
   const firstLetter = username.charAt(0).toUpperCase();
+
+  // Format timestamp to hour:minute
+  const formatTime = (ts: number) => {
+    const date = new Date(ts);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const formattedTime = formatTime(timestamp);
 
   return (
     <div style={{
       display: 'flex',
       alignItems: 'center', // Align items vertically in the center
       justifyContent: isSentByUser ? 'flex-end' : 'flex-start',
-      marginBottom: '1rem'
+      marginBottom: '1rem',
+      position: 'relative' // Position relative for time positioning
     }}>
       {!isSentByUser && (
         <div style={{
@@ -42,11 +53,22 @@ export function MessageBubble({ message, isSentByUser, username }: MessageBubble
         color: '#fff',
         fontSize: '1rem',
         wordWrap: 'break-word',
+        position: 'relative',
+        paddingBottom: '1.5rem' // Add extra space at the bottom for time
       }}>
         {message}
+        <div style={{
+          fontSize: '0.6rem',
+          color: '#ccc',
+          position: 'absolute',
+          bottom: '0.5rem', // Position the time 0.5rem from the bottom
+          right: '0.5rem', // Position the time 0.5rem from the right
+        }}>
+          {formattedTime}
+        </div>
       </div>
     </div>
   );
-};
+}
 
-export default MessageBubble;
+export default Message;

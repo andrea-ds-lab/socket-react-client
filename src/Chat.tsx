@@ -1,7 +1,7 @@
 import { useEffect, useState, KeyboardEvent, MouseEvent } from "react";
 import socket from "./socket";  // Ensure the correct path to your socket.js file
 import './css/theme.css';  // Import the theme.css file
-import MessageBubble from "./MessageBubble";
+import Message from "./Message";
 import RoundedInput from "./RountedTextField";
 import IconButton from "./IconButton";
 import { WorkspacePremium } from "@mui/icons-material";
@@ -93,21 +93,22 @@ export function ChatComponent({ username }: ChatComponentProps) {
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <p>Connected to channel:</p>
         <b>{channelName}</b>
-        <input
-          type="text"
-          value={newChannel}
-          onChange={(e) => setNewChannel(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a new channel..."
-          style={{ marginRight: "1rem" }}
-        />
-        <button style={{ height: "2rem" }} onClick={handleChannelChange}>Set channel</button>
+        <div>
+          <RoundedInput
+            value={newChannel}
+            onChange={(e) => setNewChannel(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a channel..."
+          />
+        </div>
+        <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Set channel</div>
+
       </div>
       <OffsetContainer >
         <ChatDisplay messages={messages} username={username} />
       </OffsetContainer>
-      <div>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "end" }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: "1rem" }}>
           <IconButton icon={<WorkspacePremium />} onClick={handleClick} />
           <div style={{
             background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", gap: 10

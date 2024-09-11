@@ -1,10 +1,11 @@
 import { useRef, useEffect } from 'react';
-import MessageBubble from './MessageBubble'; // Adjust the path as needed
+import Message from './Message';
 
 interface Message {
   message: string;
   timestamp: number;
   username: string;
+  highlighted: boolean;
 }
 
 interface ChatProps {
@@ -24,13 +25,14 @@ function ChatDisplay({ messages, username }: ChatProps) {
   }, [messages]); // Depend on messages so it runs when messages change
 
   return (
-    <div className="chat-container" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+    <div className="chat-container" style={{ maxHeight: '50vh', overflowY: 'hidden' }}>
       {messages.slice().map((msg, index) => (
-        <MessageBubble
+        <Message
           key={index}
           message={msg.message}
           isSentByUser={msg.username === username}
           username={msg.username}
+          timestamp={msg.timestamp}
         />
       ))}
       {/* Empty div to act as a scroll target */}
