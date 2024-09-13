@@ -2,18 +2,18 @@ import { useRef, useEffect } from 'react';
 import Message from './Message';
 
 interface Message {
-  message: string;
+  body: string;
   timestamp: number;
-  username: string;
+  user: string;
   boosted: boolean;
 }
 
 interface ChatProps {
   messages: Message[];
-  username: string;
+  user: string;
 }
 
-function ChatDisplay({ messages, username }: ChatProps) {
+function ChatDisplay({ messages, user }: ChatProps) {
   // Create a ref for the chat container
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,6 +22,9 @@ function ChatDisplay({ messages, username }: ChatProps) {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+    messages.slice().map((msg, index) => {
+      console.log(msg.user, user)
+    });
   }, [messages]); // Depend on messages so it runs when messages change
 
   return (
@@ -29,9 +32,9 @@ function ChatDisplay({ messages, username }: ChatProps) {
       {messages.slice().map((msg, index) => (
         <Message
           key={index}
-          message={msg.message}
-          isSentByUser={msg.username === username}
-          username={msg.username}
+          body={msg.body}
+          isSentByUser={msg.user === user}
+          user={msg.user}
           timestamp={msg.timestamp}
           boosted={msg.boosted}
         />

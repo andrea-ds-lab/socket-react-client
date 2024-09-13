@@ -1,14 +1,14 @@
 interface MessageProps {
-  message: string;
+  body: string;
   timestamp: number; // Added timestamp for time display
   isSentByUser: boolean;
-  username: string;
+  user: string;
   boosted: boolean;
 }
 
-export function Message({ message, timestamp, isSentByUser, username, boosted }: MessageProps) {
+export function Message({ body, timestamp, isSentByUser, user, boosted }: MessageProps) {
   // Extract the first letter of the username
-  const firstLetter = username.charAt(0).toUpperCase();
+  const firstLetter = user.charAt(0).toUpperCase();
 
   // Format timestamp to hour:minute
   const formatTime = (ts: number) => {
@@ -64,7 +64,7 @@ export function Message({ message, timestamp, isSentByUser, username, boosted }:
         position: 'relative',
         padding: "0.5rem 1rem 1.5rem 0.5rem",
       }}>
-        {message}
+        {body}
         <div style={{
           fontSize: '0.6rem',
           color: '#ccc',

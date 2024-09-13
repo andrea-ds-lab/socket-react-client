@@ -11,7 +11,7 @@ function App() {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();  // Prevent default Enter key behavior
-      //sendMessage();  // Send the message on Enter key press
+      login();  // Send the message on Enter key press
     }
   };
 
@@ -64,7 +64,7 @@ function App() {
           <div className="rounded-button" onClick={logout}>Logout</div>
         </div>
           <hr style={{ width: "100%" }} />
-          <ChatComponent username={username} />
+          <ChatComponent user={username} />
         </>
         :
         <></>}

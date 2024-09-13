@@ -12,21 +12,21 @@ import OffsetContainer from "./OffsetContainer";
 interface Channel {
   leave: () => void;
   join: () => { receive: (status: string, callback: (response: any) => void) => void };
-  on: (event: string, callback: (payload: { message: string, timestamp: number, username: string, boosted: boolean, channel: string }) => void) => void;
-  push: (event: string, payload: { message: string, timestamp: number, username: string, boosted: boolean, channel: string }) => void;
+  on: (event: string, callback: (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void) => void;
+  push: (event: string, payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void;
 }
 
 type Message = {
-  message: string, timestamp: number, username: string, boosted: boolean, channel: string
+  body: string, timestamp: number, user: string, boosted: boolean, channel: string
 }
 
 interface ChatComponentProps {
-  username: string;  // Properly define the username prop type
+  user: string;  // Properly define the username prop type
 }
 
-export function ChatComponent({ username }: ChatComponentProps) {
+export function ChatComponent({ user }: ChatComponentProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [message, setMessage] = useState<string>("");
+  const [body, setBody] = useState<string>("");
   const [newChannel, setNewChannel] = useState<string>("");
   const [channelName, setChannelName] = useState<string>("lobby");
   const [channel, setChannel] = useState<Channel | null>(null);
@@ -50,7 +50,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
         console.log("Unable to join", response);
       });
 
-    newChannelInstance.on("new_msg", (payload: { message: string, timestamp: number, username: string, boosted: boolean, channel: string }) => {
+    newChannelInstance.on("new_msg", (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => {
       console.log("Message payload", payload)
       setMessages((prevMessages) => [...prevMessages, payload]);
     });
@@ -64,9 +64,9 @@ export function ChatComponent({ username }: ChatComponentProps) {
   }, [channelName]);  // The effect runs only when `channelName` changes
 
   const sendMessage = () => {
-    if (message.trim() !== "" && channel) {
-      channel.push("new_msg", { message: message, timestamp: Date.now(), username: username, boosted: boostOn, channel: channelName });
-      setMessage("");  // Clear the message input after sending
+    if (body.trim() !== "" && channel) {
+      channel.push("new_msg", { body: body, timestamp: Date.now(), user: user, boosted: boostOn, channel: channelName });
+      setBody("");  // Clear the message input after sending
     }
   };
 
@@ -108,7 +108,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
 
       </div>
       <OffsetContainer >
-        <ChatDisplay messages={messages} username={username} />
+        <ChatDisplay messages={messages} user={user} />
       </OffsetContainer>
       <div style={{ display: "flex", justifyContent: "end" }}>
         <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: "1rem" }}>
@@ -117,8 +117,8 @@ export function ChatComponent({ username }: ChatComponentProps) {
             background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", gap: 10
           }}>
             <RoundedInput
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type a message..."
             />
