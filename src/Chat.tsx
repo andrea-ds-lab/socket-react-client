@@ -12,12 +12,12 @@ import OffsetContainer from "./OffsetContainer";
 interface Channel {
   leave: () => void;
   join: () => { receive: (status: string, callback: (response: any) => void) => void };
-  on: (event: string, callback: (payload: { message: string, timestamp: number, username: string, boosted: boolean }) => void) => void;
-  push: (event: string, payload: { message: string, timestamp: number, username: string, boosted: boolean }) => void;
+  on: (event: string, callback: (payload: { message: string, timestamp: number, username: string, boosted: boolean, channel: string }) => void) => void;
+  push: (event: string, payload: { message: string, timestamp: number, username: string, boosted: boolean, channel: string }) => void;
 }
 
 type Message = {
-  message: string, timestamp: number, username: string
+  message: string, timestamp: number, username: string, boosted: boolean, channel: string
 }
 
 interface ChatComponentProps {
@@ -50,7 +50,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
         console.log("Unable to join", response);
       });
 
-    newChannelInstance.on("new_msg", (payload: { message: string, timestamp: number, username: string, boosted: boolean }) => {
+    newChannelInstance.on("new_msg", (payload: { message: string, timestamp: number, username: string, boosted: boolean, channel: string }) => {
       console.log("Message payload", payload)
       setMessages((prevMessages) => [...prevMessages, payload]);
     });
@@ -65,7 +65,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
 
   const sendMessage = () => {
     if (message.trim() !== "" && channel) {
-      channel.push("new_msg", { message: message, timestamp: Date.now(), username: username, boosted: boostOn });
+      channel.push("new_msg", { message: message, timestamp: Date.now(), username: username, boosted: boostOn, channel: channelName });
       setMessage("");  // Clear the message input after sending
     }
   };
