@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Message from './Message';
 
 interface Message {
@@ -8,28 +8,49 @@ interface Message {
   boosted: boolean;
 }
 
-interface ChatProps {
-  messages: Message[];
+interface ChatDisplayProps {
   user: string;
 }
 
-function ChatDisplay({ messages, user }: ChatProps) {
-  // Create a ref for the chat container
+const ChatDisplay: React.FC<ChatDisplayProps> = ({ user }) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/messages');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setMessages(data.messages); // Assuming `data.messages` is the array of messages
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   useEffect(() => {
     // Scroll to the bottom whenever messages change
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    messages.slice().map((msg, index) => {
-      console.log(msg.user, user)
-    });
   }, [messages]); // Depend on messages so it runs when messages change
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <div className="chat-container" style={{ maxHeight: '50vh', overflowY: 'hidden' }}>
-      {messages.slice().map((msg, index) => (
+    <div className="chat-container" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+      {messages.map((msg, index) => (
         <Message
           key={index}
           body={msg.body}
@@ -43,6 +64,6 @@ function ChatDisplay({ messages, user }: ChatProps) {
       <div ref={chatEndRef} />
     </div>
   );
-}
+};
 
 export default ChatDisplay;
