@@ -1,28 +1,73 @@
-import { useState } from "react"
+import { KeyboardEvent, useState } from "react"
 import { ChatComponent } from "./Chat"
+import RoundedInput from "./RountedTextField"
 
 function App() {
 
   const [username, setUsername] = useState("andrea")
+  const [password, setPassword] = useState("")
+  const [signedIn, setSignedIn] = useState(false)
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();  // Prevent default Enter key behavior
+      //sendMessage();  // Send the message on Enter key press
+    }
   };
+
+  const login = () => {
+    console.log("logged in as %s with password %s", username, password);
+    setSignedIn(true)
+  };
+
+  const logout = () => {
+    setSignedIn(false);
+  }
+
+  function signInComponent() {
+    if (signedIn) {
+      return <></>
+    } else {
+      return <div style={{}}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <p>Username</p>
+            <RoundedInput
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Username"
+            />
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <p>Password</p>
+            <RoundedInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Username"
+            />
+          </div>
+        </div>
+        <div className="rounded-button" style={{ width: "10rem" }} onClick={login}>Login</div>
+      </div>
+    }
+  }
 
   return (
     <div style={{ padding: "2rem", display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "flex", gap: 10 }}>
-        <label htmlFor="username">Enter your username:</label>
-        <input
-          id="username"
-          type="text"
-          value={username}
-          onChange={handleUsernameChange}
-          placeholder="Enter username"
-        />
-      </div>
-      <hr style={{ width: "100%" }} />
-      <ChatComponent username={username} />
+      {signInComponent()}
+      {signedIn ?
+        <><div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <label htmlFor="username">Logged in as:</label>
+          <p><b>{username}</b></p>
+          <div className="rounded-button" onClick={logout}>Logout</div>
+        </div>
+          <hr style={{ width: "100%" }} />
+          <ChatComponent username={username} />
+        </>
+        :
+        <></>}
     </div >
   )
 }
