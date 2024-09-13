@@ -3,9 +3,10 @@ interface MessageProps {
   timestamp: number; // Added timestamp for time display
   isSentByUser: boolean;
   username: string;
+  boosted: boolean;
 }
 
-export function Message({ message, timestamp, isSentByUser, username }: MessageProps) {
+export function Message({ message, timestamp, isSentByUser, username, boosted }: MessageProps) {
   // Extract the first letter of the username
   const firstLetter = username.charAt(0).toUpperCase();
 
@@ -18,6 +19,14 @@ export function Message({ message, timestamp, isSentByUser, username }: MessageP
   };
 
   const formattedTime = formatTime(timestamp);
+
+  function getMessageBackgroundColor(): string {
+    if (isSentByUser) {
+      return boosted ? 'var(--highlight-color-light)' : 'var(--chat-message-bg-light)'
+    } else {
+      return 'var(--chat-message-bg-dark)'
+    }
+  }
 
   return (
     <div style={{
@@ -47,7 +56,7 @@ export function Message({ message, timestamp, isSentByUser, username }: MessageP
       <div style={{
         maxWidth: '60%',
         borderRadius: '0.5rem',
-        backgroundColor: isSentByUser ? 'var(--chat-message-bg-light)' : 'var(--chat-message-bg-dark)',
+        backgroundColor: getMessageBackgroundColor(),
         boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
         color: '#fff',
         fontSize: '1rem',

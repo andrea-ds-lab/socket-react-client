@@ -5,7 +5,7 @@ interface Message {
   message: string;
   timestamp: number;
   username: string;
-  highlighted: boolean;
+  boosted: boolean;
 }
 
 interface ChatProps {
@@ -33,6 +33,7 @@ function ChatDisplay({ messages, username }: ChatProps) {
           isSentByUser={msg.username === username}
           username={msg.username}
           timestamp={msg.timestamp}
+          boosted={msg.boosted}
         />
       ))}
       {/* Empty div to act as a scroll target */}

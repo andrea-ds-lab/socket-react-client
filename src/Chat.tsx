@@ -12,8 +12,8 @@ import OffsetContainer from "./OffsetContainer";
 interface Channel {
   leave: () => void;
   join: () => { receive: (status: string, callback: (response: any) => void) => void };
-  on: (event: string, callback: (payload: { message: string, timestamp: number, username: string }) => void) => void;
-  push: (event: string, payload: { message: string, timestamp: number, username: string }) => void;
+  on: (event: string, callback: (payload: { message: string, timestamp: number, username: string, boosted: boolean }) => void) => void;
+  push: (event: string, payload: { message: string, timestamp: number, username: string, boosted: boolean }) => void;
 }
 
 type Message = {
@@ -30,6 +30,8 @@ export function ChatComponent({ username }: ChatComponentProps) {
   const [newChannel, setNewChannel] = useState<string>("");
   const [channelName, setChannelName] = useState<string>("lobby");
   const [channel, setChannel] = useState<Channel | null>(null);
+  const [boostOn, setBoostOn] = useState<boolean>(false);
+
 
   useEffect(() => {
     // Cleanup previous channel before joining a new one
@@ -48,7 +50,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
         console.log("Unable to join", response);
       });
 
-    newChannelInstance.on("new_msg", (payload: { message: string, timestamp: number, username: string }) => {
+    newChannelInstance.on("new_msg", (payload: { message: string, timestamp: number, username: string, boosted: boolean }) => {
       console.log("Message payload", payload)
       setMessages((prevMessages) => [...prevMessages, payload]);
     });
@@ -63,7 +65,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
 
   const sendMessage = () => {
     if (message.trim() !== "" && channel) {
-      channel.push("new_msg", { message: message, timestamp: Date.now(), username: username });
+      channel.push("new_msg", { message: message, timestamp: Date.now(), username: username, boosted: boostOn });
       setMessage("");  // Clear the message input after sending
     }
   };
@@ -84,6 +86,7 @@ export function ChatComponent({ username }: ChatComponentProps) {
 
   const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
     console.log("Click");
+    setBoostOn(!boostOn);
     // You can handle async operations here
   };
 

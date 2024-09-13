@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { PowerSettingsNew, WorkspacePremium } from '@mui/icons-material';
+import { SentimentSatisfied, SentimentVerySatisfied } from '@mui/icons-material';
 
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
@@ -38,9 +38,9 @@ function IconButton({ onClick, ...rest }: IconButtonProps) {
   return (
     <StyledButton isActive={isActive} onClick={handleClick} {...rest}>
       {isActive ? (
-        <WorkspacePremium sx={{ color: 'var(--highlight-color-light)' }} />
+        <SentimentVerySatisfied sx={{ color: 'var(--highlight-color-light)' }} />
       ) : (
-        <PowerSettingsNew sx={{ color: '#E0E2DB' }} />
+        <SentimentSatisfied sx={{ color: '#E0E2DB' }} />
       )}
     </StyledButton>
   );
