@@ -15,7 +15,8 @@ function ChatDisplay({ user }: ChatDisplayProps) {
 
   // Fetch messages on component mount
   useEffect(() => {
-    dispatch(fetchMessages());
+    const startFromDate = null; // Pass null to use the default date (1st January 2024)
+    dispatch(fetchMessages(startFromDate));
   }, [dispatch]);
 
   // Scroll to the bottom when messages change
@@ -50,12 +51,15 @@ function ChatDisplay({ user }: ChatDisplayProps) {
       </style>
       {messages.map((msg, index) => (
         <Message
+          currentUser={user}
           key={index}
+          id={msg.id}
           body={msg.body}
-          isSentByUser={msg.user === user}
           user={msg.user}
-          timestamp={msg.timestamp}
           boosted={msg.boosted}
+          channel={msg.channel}
+          inserted_at={msg.inserted_at}
+          updated_at={msg.updated_at}
         />
       ))}
       {/* Empty div to act as a scroll target */}

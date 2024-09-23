@@ -1,5 +1,5 @@
 // types.ts
-export interface Message {
+export interface MessageProps {
   id: number;
   user: string;
   body: string;

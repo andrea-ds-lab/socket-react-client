@@ -2,10 +2,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Define the message type (same as before)
 interface Message {
+  id: number,
   body: string;
   timestamp: number;
   user: string;
   boosted: boolean;
+  channel: string,
+  inserted_at: string,
+  updated_at: string,
 }
 
 // Initial state
@@ -24,13 +28,16 @@ const initialState: MessagesState = {
 // Async thunk action for fetching messages
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
-  async (_, { rejectWithValue }) => {
+  async (startFrom: string | null, { rejectWithValue }) => {
+    const startFromDate = startFrom || '2024-01-01T00:00:00Z';  // 2024 January 1st
     try {
-      const response = await fetch('http://localhost:4000/api/messages');
+      const response = await fetch(`http://localhost:4000/api/messages?start_from=${encodeURIComponent(startFromDate)}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
+      console.log(data.messages);
+
       return data.messages; // Assuming `data.messages` is the array of messages
     } catch (error: any) {
       return rejectWithValue(error.message);

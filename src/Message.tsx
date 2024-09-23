@@ -1,24 +1,27 @@
-interface MessageProps {
-  body: string;
-  timestamp: number; // Added timestamp for time display
-  isSentByUser: boolean;
-  user: string;
-  boosted: boolean;
+import { MessageProps } from "./types";
+
+interface MessageComponentProps extends MessageProps {
+  currentUser: string;
 }
 
-export function Message({ body, timestamp, isSentByUser, user, boosted }: MessageProps) {
+export function Message({ currentUser, id, body, user, boosted, channel, inserted_at, updated_at }: MessageComponentProps) {
   // Extract the first letter of the username
   const firstLetter = user.charAt(0).toUpperCase();
+  const isSentByUser = currentUser === user;
 
-  // Format timestamp to hour:minute
-  const formatTime = (ts: number) => {
-    const date = new Date(ts);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+  function extractTime(dateString: string): string {
+    // Convert the ISO date string to a Date object
+    const date = new Date(dateString);
+
+    // Extract hours and minutes in UTC
+    const hours = date.getUTCHours().toString().padStart(2, '0'); // Pad with leading zero if needed
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Pad with leading zero if needed
+
+    // Return the time in hh:mm format
     return `${hours}:${minutes}`;
-  };
+  }
 
-  const formattedTime = formatTime(timestamp);
+  const formattedTime = extractTime(inserted_at);
 
   function getMessageBackgroundColor(): string {
     if (isSentByUser) {

@@ -1,7 +1,6 @@
 import { useEffect, useState, KeyboardEvent, MouseEvent } from "react";
 import socket from "./socket";  // Ensure the correct path to your socket.js file
 import './css/theme.css';  // Import the theme.css file
-import Message from "./Message";
 import RoundedInput from "./RountedTextField";
 import IconButton from "./IconButton";
 import { WorkspacePremium } from "@mui/icons-material";
@@ -18,16 +17,13 @@ interface Channel {
   push: (event: string, payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void;
 }
 
-type Message = {
-  body: string, timestamp: number, user: string, boosted: boolean, channel: string
-}
+
 
 interface ChatComponentProps {
   user: string;  // Properly define the username prop type
 }
 
 export function ChatComponent({ user }: ChatComponentProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [body, setBody] = useState<string>("");
   const [newChannel, setNewChannel] = useState<string>("");
   const [channelName, setChannelName] = useState<string>("lobby");
@@ -55,9 +51,7 @@ export function ChatComponent({ user }: ChatComponentProps) {
 
     newChannelInstance.on("new_msg", (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => {
       console.log("Message payload", payload)
-      setMessages((prevMessages) => [...prevMessages, payload]);
-      dispatch(fetchMessages());
-
+      dispatch(fetchMessages(null));
     });
 
     setChannel(newChannelInstance);
@@ -110,10 +104,9 @@ export function ChatComponent({ user }: ChatComponentProps) {
           />
         </div>
         <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Set channel</div>
-
       </div>
       <OffsetContainer >
-        <ChatDisplay messages={messages} user={user} />
+        <ChatDisplay user={user} />
       </OffsetContainer>
       <div style={{ display: "flex", justifyContent: "end" }}>
         <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: "1rem" }}>
