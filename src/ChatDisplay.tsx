@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import Message from './Message';
+import { useEffect, useRef, useState } from "react";
+import Message from "./Message";
 
 interface Message {
   body: string;
@@ -10,9 +10,10 @@ interface Message {
 
 interface ChatDisplayProps {
   user: string;
+  lastUpdate: number;
 }
 
-const ChatDisplay: React.FC<ChatDisplayProps> = ({ user }) => {
+function ChatDisplay({ user, lastUpdate }: ChatDisplayProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,36 +21,55 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ user }) => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    console.log("In useEffect, loading past messages...")
     const fetchMessages = async () => {
       try {
         const response = await fetch('http://localhost:4000/api/messages');
         if (!response.ok) {
+          console.log("Error while loading the messages.")
+
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setMessages(data.messages); // Assuming `data.messages` is the array of messages
+        setMessages(data.messages);
       } catch (error: any) {
         setError(error.message);
       } finally {
+        console.log("Messages loaded.")
         setLoading(false);
       }
     };
 
     fetchMessages();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   useEffect(() => {
-    // Scroll to the bottom whenever messages change
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]); // Depend on messages so it runs when messages change
+  }, [messages]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="chat-container" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+    <div
+      className="chat-container"
+      style={{
+        maxHeight: '50vh',
+        overflowY: 'scroll',
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE and Edge
+      }}
+    >
+      {/* For WebKit browsers */}
+      <style>
+        {`
+          .chat-container::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
       {messages.map((msg, index) => (
         <Message
           key={index}
@@ -60,10 +80,9 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ user }) => {
           boosted={msg.boosted}
         />
       ))}
-      {/* Empty div to act as a scroll target */}
       <div ref={chatEndRef} />
     </div>
   );
-};
+}
 
 export default ChatDisplay;

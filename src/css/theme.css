@@ -101,10 +101,11 @@ button:hover {
   color: var(--text-color);
   border-radius: 8px;
   padding: 1rem;
-  max-height: 500px;
+  max-height: 10rem;
   /* Adjust as needed */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  scrollbar-width: 1rem;
 }

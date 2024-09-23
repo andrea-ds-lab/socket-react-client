@@ -45,7 +45,7 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Username"
+              placeholder="..."
             />
           </div>
         </div>
