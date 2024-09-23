@@ -24,23 +24,29 @@ function ChatDisplay({ user }: ChatDisplayProps) {
   // Scroll to the bottom when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }, [messages]);
 
+  // Function to check if the tombstone is visible
   const checkTombstoneVisibility = () => {
     if (tombstoneRef.current && chatContainerRef.current) {
       const tombstoneRect = tombstoneRef.current.getBoundingClientRect();
       const containerRect = chatContainerRef.current.getBoundingClientRect();
 
+      // Check if the tombstone is in the visible area of the container
       const isVisible =
         tombstoneRect.bottom >= containerRect.top && tombstoneRect.top <= containerRect.bottom;
 
       if (isVisible && !tombstoneVisible) {
         console.log('Tombstone is visible: Load more history');
-        setTombstoneVisible(true);
+        // Call your function to load more messages here
+        setTombstoneVisible(true); // Mark tombstone as visible
       } else if (!isVisible && tombstoneVisible) {
-        setTombstoneVisible(false);
+        setTombstoneVisible(false); // Mark tombstone as not visible
       }
     }
   };
