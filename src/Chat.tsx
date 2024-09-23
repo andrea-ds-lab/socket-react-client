@@ -17,8 +17,6 @@ interface Channel {
   push: (event: string, payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void;
 }
 
-
-
 interface ChatComponentProps {
   user: string;  // Properly define the username prop type
 }
@@ -50,7 +48,6 @@ export function ChatComponent({ user }: ChatComponentProps) {
       });
 
     newChannelInstance.on("new_msg", (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => {
-      console.log("Message payload", payload)
       dispatch(fetchMessages(null));
     });
 

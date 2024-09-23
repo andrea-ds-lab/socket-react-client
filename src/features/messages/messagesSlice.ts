@@ -36,8 +36,6 @@ export const fetchMessages = createAsyncThunk(
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      console.log(data.messages);
-
       return data.messages; // Assuming `data.messages` is the array of messages
     } catch (error: any) {
       return rejectWithValue(error.message);
