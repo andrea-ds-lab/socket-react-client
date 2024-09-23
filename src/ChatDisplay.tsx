@@ -1,65 +1,43 @@
-import { useEffect, useRef, useState } from "react";
-import Message from "./Message";
-
-interface Message {
-  body: string;
-  timestamp: number;
-  user: string;
-  boosted: boolean;
-}
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchMessages } from './features/messages/messagesSlice';
+import { RootState } from './app/store';
+import Message from './Message';
 
 interface ChatDisplayProps {
   user: string;
-  lastUpdate: number;
 }
 
-function ChatDisplay({ user, lastUpdate }: ChatDisplayProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
+function ChatDisplay({ user }: ChatDisplayProps) {
+  const dispatch = useDispatch();
+  const { messages, loading, error } = useSelector((state: RootState) => state.messages);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
+  // Fetch messages on component mount
   useEffect(() => {
-    console.log("In useEffect, loading past messages...")
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/api/messages');
-        if (!response.ok) {
-          console.log("Error while loading the messages.")
+    dispatch(fetchMessages());
+  }, [dispatch]);
 
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setMessages(data.messages);
-      } catch (error: any) {
-        setError(error.message);
-      } finally {
-        console.log("Messages loaded.")
-        setLoading(false);
-      }
-    };
-
-    fetchMessages();
-  }, []);
-
+  // Scroll to the bottom when messages change
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
+  // Render loading or error states
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  // Render the chat messages
   return (
     <div
       className="chat-container"
       style={{
         maxHeight: '50vh',
         overflowY: 'scroll',
-        scrollbarWidth: 'none', // Firefox
-        msOverflowStyle: 'none', // IE and Edge
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
       }}
     >
       {/* For WebKit browsers */}
@@ -80,6 +58,7 @@ function ChatDisplay({ user, lastUpdate }: ChatDisplayProps) {
           boosted={msg.boosted}
         />
       ))}
+      {/* Empty div to act as a scroll target */}
       <div ref={chatEndRef} />
     </div>
   );

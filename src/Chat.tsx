@@ -7,6 +7,8 @@ import IconButton from "./IconButton";
 import { WorkspacePremium } from "@mui/icons-material";
 import ChatDisplay from "./ChatDisplay";
 import OffsetContainer from "./OffsetContainer";
+import { useDispatch } from "react-redux";
+import { fetchMessages } from "./features/messages/messagesSlice";
 
 // Interface to define the type of channel object
 interface Channel {
@@ -32,6 +34,7 @@ export function ChatComponent({ user }: ChatComponentProps) {
   const [channel, setChannel] = useState<Channel | null>(null);
   const [boostOn, setBoostOn] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Cleanup previous channel before joining a new one
@@ -53,6 +56,8 @@ export function ChatComponent({ user }: ChatComponentProps) {
     newChannelInstance.on("new_msg", (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => {
       console.log("Message payload", payload)
       setMessages((prevMessages) => [...prevMessages, payload]);
+      dispatch(fetchMessages());
+
     });
 
     setChannel(newChannelInstance);

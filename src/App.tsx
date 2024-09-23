@@ -28,7 +28,7 @@ function App() {
     if (signedIn) {
       return <></>
     } else {
-      return <div style={{}}>
+      return <div>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <p>Username</p>
