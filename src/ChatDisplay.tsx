@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchMessages } from './features/messages/messagesSlice';
 import { RootState } from './app/store';
@@ -11,7 +11,9 @@ interface ChatDisplayProps {
 function ChatDisplay({ user }: ChatDisplayProps) {
   const dispatch = useDispatch();
   const { messages, loading, error } = useSelector((state: RootState) => state.messages);
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const tombstoneRef = useRef<HTMLDivElement | null>(null);
+  const [tombstoneVisible, setTombstoneVisible] = useState(false);
 
   // Fetch messages on component mount
   useEffect(() => {
@@ -21,10 +23,27 @@ function ChatDisplay({ user }: ChatDisplayProps) {
 
   // Scroll to the bottom when messages change
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const checkTombstoneVisibility = () => {
+    if (tombstoneRef.current && chatContainerRef.current) {
+      const tombstoneRect = tombstoneRef.current.getBoundingClientRect();
+      const containerRect = chatContainerRef.current.getBoundingClientRect();
+
+      const isVisible =
+        tombstoneRect.bottom >= containerRect.top && tombstoneRect.top <= containerRect.bottom;
+
+      if (isVisible && !tombstoneVisible) {
+        console.log('Tombstone is visible: Load more history');
+        setTombstoneVisible(true);
+      } else if (!isVisible && tombstoneVisible) {
+        setTombstoneVisible(false);
+      }
+    }
+  };
 
   // Render loading or error states
   if (loading) return <p>Loading...</p>;
@@ -34,12 +53,14 @@ function ChatDisplay({ user }: ChatDisplayProps) {
   return (
     <div
       className="chat-container"
+      ref={chatContainerRef}
       style={{
         maxHeight: '50vh',
         overflowY: 'scroll',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
       }}
+      onScroll={checkTombstoneVisibility} // Use onScroll here
     >
       {/* For WebKit browsers */}
       <style>
@@ -49,6 +70,10 @@ function ChatDisplay({ user }: ChatDisplayProps) {
           }
         `}
       </style>
+      {/* Tombstone div to detect visibility */}
+      <div ref={tombstoneRef} style={{ padding: '20px', backgroundColor: '#f0f0f0' }}>
+        Start Tombstone
+      </div>
       {messages.map((msg, index) => (
         <Message
           currentUser={user}
@@ -63,7 +88,7 @@ function ChatDisplay({ user }: ChatDisplayProps) {
         />
       ))}
       {/* Empty div to act as a scroll target */}
-      <div ref={chatEndRef} />
+      <div style={{ height: '1px' }} />
     </div>
   );
 }
