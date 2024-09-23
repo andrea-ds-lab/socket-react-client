@@ -10,17 +10,29 @@ const useStyles = makeStyles({
       color: "#fff", // Default text color
       height: "2rem",
       background: "",
-
-      // Border color when focused
+      transition: 'background-color 0.3s ease, height 0.3s ease', // Smooth transition for background and height changes
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: 'var(--text-color)', // Change this color to any you prefer
       },
+      '&:hover fieldset': {
+        background: '#2222', // Border color on hover
+      },
+
+
     },
 
     // Change the label color when focused
     '& .MuiInputLabel-root.Mui-focused': {
       color: 'red', // Label color when focused
+      height: "2rem",
     },
+
+    backgroundContainer: {
+      transition: 'height 0.3s ease', // Smooth transition for background height changes
+      background: 'rgba(0, 0, 0, 0.1)', // Example background
+    },
+
+
   },
 });
 
