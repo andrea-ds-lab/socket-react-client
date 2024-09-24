@@ -109,3 +109,31 @@ button:hover {
   gap: 10px;
   scrollbar-width: 1rem;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  display: flex;
+  background-color: black;
+  color: #fff;
+  text-align: right;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-left: 3rem;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 2;
+  bottom: 50%;
+  left: 50%;
+  margin-left: 1rem;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

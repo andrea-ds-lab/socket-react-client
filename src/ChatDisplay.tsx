@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchMessages } from './features/messages/messagesSlice';
 import { RootState } from './app/store';
 import Message from './Message';
+import { CircularProgress } from '@mui/material';
 
 interface ChatDisplayProps {
   user: string;
@@ -15,9 +16,11 @@ function ChatDisplay({ user }: ChatDisplayProps) {
   const tombstoneRef = useRef<HTMLDivElement | null>(null);
   const [tombstoneVisible, setTombstoneVisible] = useState(false);
 
+  const startFromDate = null; // Pass null to use the default date (1st January 2024)
+
+
   // Fetch messages on component mount
   useEffect(() => {
-    const startFromDate = null; // Pass null to use the default date (1st January 2024)
     dispatch(fetchMessages(startFromDate));
   }, [dispatch]);
 
@@ -43,6 +46,7 @@ function ChatDisplay({ user }: ChatDisplayProps) {
 
       if (isVisible && !tombstoneVisible) {
         console.log('Tombstone is visible: Load more history');
+        dispatch(fetchMessages(startFromDate));
         // Call your function to load more messages here
         setTombstoneVisible(true); // Mark tombstone as visible
       } else if (!isVisible && tombstoneVisible) {
@@ -77,8 +81,8 @@ function ChatDisplay({ user }: ChatDisplayProps) {
         `}
       </style>
       {/* Tombstone div to detect visibility */}
-      <div ref={tombstoneRef} style={{ padding: '20px', backgroundColor: '#f0f0f0' }}>
-        Start Tombstone
+      <div ref={tombstoneRef} style={{ display: "flex", justifyContent: "center" }}>
+        <CircularProgress size={"2rem"} sx={{ color: "var(--highlight-color-light)" }} />
       </div>
       {messages.map((msg, index) => (
         <Message

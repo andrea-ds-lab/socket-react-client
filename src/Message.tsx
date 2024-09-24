@@ -1,10 +1,13 @@
 import { MessageProps } from "./types";
+import './css/theme.css';
+
 
 interface MessageComponentProps extends MessageProps {
   currentUser: string;
 }
 
 export function Message({ currentUser, id, body, user, boosted, channel, inserted_at, updated_at }: MessageComponentProps) {
+
   // Extract the first letter of the username
   const firstLetter = user.charAt(0).toUpperCase();
   const isSentByUser = currentUser === user;
@@ -40,24 +43,29 @@ export function Message({ currentUser, id, body, user, boosted, channel, inserte
       position: 'relative',
     }}>
       {!isSentByUser && (
-        <div style={{
-          width: '2rem',
-          height: '2rem',
-          borderRadius: '50%',
-          backgroundColor: '#8B2635', // Background color for the icon
-          color: '#FFF', // Text color for the icon
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          marginRight: '0.5rem' // Space between the icon and the message
-        }}>
-          {firstLetter}
+        <div className="tooltip">
+
+          <div style={{
+            width: '2rem',
+            height: '2rem',
+            borderRadius: '50%',
+            backgroundColor: '#8B2635',
+            color: '#FFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            marginRight: '0.5rem'
+          }}>
+            {firstLetter}
+            <span className="tooltiptext">{user}</span>
+          </div>
         </div>
       )}
       <div style={{
         maxWidth: '60%',
+        minWidth: "2rem",
         borderRadius: '0.5rem',
         backgroundColor: getMessageBackgroundColor(),
         boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
@@ -72,8 +80,8 @@ export function Message({ currentUser, id, body, user, boosted, channel, inserte
           fontSize: '0.6rem',
           color: '#ccc',
           position: 'absolute',
-          bottom: '0.5rem', // Position the time 0.5rem from the bottom
-          right: '0.5rem', // Position the time 0.5rem from the right
+          bottom: '0.5rem',
+          right: '0.5rem',
         }}>
           {formattedTime}
         </div>

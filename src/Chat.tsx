@@ -1,6 +1,6 @@
 import { useEffect, useState, KeyboardEvent, MouseEvent } from "react";
 import socket from "./socket";  // Ensure the correct path to your socket.js file
-import './css/theme.css';  // Import the theme.css file
+import './css/theme.css';
 import RoundedInput from "./RountedTextField";
 import IconButton from "./IconButton";
 import { WorkspacePremium } from "@mui/icons-material";
