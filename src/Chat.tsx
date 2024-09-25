@@ -7,7 +7,8 @@ import { WorkspacePremium } from "@mui/icons-material";
 import ChatDisplay from "./ChatDisplay";
 import OffsetContainer from "./OffsetContainer";
 import { useDispatch } from "react-redux";
-import { fetchMessages } from "./features/messages/messagesSlice";
+import { addMessage, fetchMessages } from "./features/messages/messagesSlice";
+import { MessageProps } from "./types";
 
 // Interface to define the type of channel object
 interface Channel {
@@ -47,8 +48,8 @@ export function ChatComponent({ user }: ChatComponentProps) {
         console.log("Unable to join", response);
       });
 
-    newChannelInstance.on("new_msg", (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => {
-      dispatch(fetchMessages(null));
+    newChannelInstance.on("new_msg", (payload: MessageProps) => {
+      dispatch(addMessage(payload));
     });
 
     setChannel(newChannelInstance);

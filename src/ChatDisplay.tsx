@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchMessages } from './features/messages/messagesSlice';
+import { addHistory, fetchMessages } from './features/messages/messagesSlice';
 import { RootState } from './app/store';
 import Message from './Message';
 import { CircularProgress } from '@mui/material';
+import { MESSAGES_BATCH_SIZE } from './config';
 
 interface ChatDisplayProps {
   user: string;
@@ -16,12 +17,9 @@ function ChatDisplay({ user }: ChatDisplayProps) {
   const tombstoneRef = useRef<HTMLDivElement | null>(null);
   const [tombstoneVisible, setTombstoneVisible] = useState(false);
 
-  const startFromDate = null; // Pass null to use the default date (1st January 2024)
-
-
   // Fetch messages on component mount
   useEffect(() => {
-    dispatch(fetchMessages(startFromDate));
+    dispatch(fetchMessages(messages.length > 0 ? messages[0].id : null));
   }, [dispatch]);
 
   // Scroll to the bottom when messages change
@@ -46,7 +44,7 @@ function ChatDisplay({ user }: ChatDisplayProps) {
 
       if (isVisible && !tombstoneVisible) {
         console.log('Tombstone is visible: Load more history');
-        dispatch(fetchMessages(startFromDate));
+        dispatch(addHistory({ oldestId: messages.length > 0 ? messages[0].id : null, amount: MESSAGES_BATCH_SIZE }));
         // Call your function to load more messages here
         setTombstoneVisible(true); // Mark tombstone as visible
       } else if (!isVisible && tombstoneVisible) {
@@ -70,7 +68,7 @@ function ChatDisplay({ user }: ChatDisplayProps) {
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
       }}
-      onScroll={checkTombstoneVisibility} // Use onScroll here
+      onScroll={checkTombstoneVisibility}
     >
       {/* For WebKit browsers */}
       <style>
