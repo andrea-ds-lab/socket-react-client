@@ -3,13 +3,12 @@ import { TextField, InputAdornment } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 // Define custom hook for styles
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   roundedInput: {
     '& .MuiOutlinedInput-root': {
       borderRadius: '1.5rem', // Rounded corners
       color: "#fff", // Default text color
       height: "2rem",
-      background: "",
       transition: 'background-color 0.3s ease, height 0.3s ease', // Smooth transition for background and height changes
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: 'var(--text-color)', // Change this color to any you prefer
@@ -17,8 +16,6 @@ const useStyles = makeStyles({
       '&:hover fieldset': {
         background: '#2222', // Border color on hover
       },
-
-
     },
 
     // Change the label color when focused
@@ -27,14 +24,17 @@ const useStyles = makeStyles({
       height: "2rem",
     },
 
-    backgroundContainer: {
-      transition: 'height 0.3s ease', // Smooth transition for background height changes
-      background: 'rgba(0, 0, 0, 0.1)', // Example background
+    // Media query for mobile responsiveness
+    [theme.breakpoints.down('sm')]: { // Adjust according to your breakpoints
+      '& .MuiOutlinedInput-root': {
+        fontSize: '0.8rem', // Smaller font size for mobile devices
+      },
+      '& .MuiInputLabel-root': {
+        fontSize: '0.8rem', // Adjust label size if necessary
+      },
     },
-
-
   },
-});
+}));
 
 interface RoundedInputProps {
   value: string;

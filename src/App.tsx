@@ -55,20 +55,37 @@ function App() {
   }
 
   return (
-    <div style={{ padding: "2rem", display: "flex", flexDirection: "column" }}>
-      {signInComponent()}
-      {signedIn ?
-        <><div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <label htmlFor="username">Logged in as:</label>
-          <p><b>{username}</b></p>
-          <div className="rounded-button" onClick={logout}>Logout</div>
-        </div>
-          <hr style={{ width: "100%" }} />
-          <ChatComponent user={username} />
-        </>
-        :
-        <></>}
-    </div >
+    <div
+      id="main-container"
+      style={{
+        padding: "1rem 2rem",
+        display: "flex",
+        flexDirection: "column",
+        background: "red",
+        height: "100vh",  // Ensure the container takes the full height of the viewport
+        justifyContent: "space-between"
+      }}>
+      {/* Sign-In Component at the Top */}
+      <div style={{ flexShrink: 0 }}> {/* Prevents the sign-in component from shrinking */}
+        {signInComponent()}
+      </div>
+
+      {/* Content for Logged-In Users at the Bottom */}
+      <div style={{ flexGrow: 1, display: signedIn ? 'flex' : 'none', flexDirection: 'column', gap: '10px' }}>
+        {signedIn ? (
+          <>
+            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <label htmlFor="username">Logged in as:</label>
+              <p><b>{username}</b></p>
+              <div className="rounded-button" onClick={logout}>Logout</div>
+            </div>
+            <hr style={{ width: "100%" }} />
+            <ChatComponent user={username} />
+          </>
+        ) : null}
+      </div>
+    </div>
+
   )
 }
 

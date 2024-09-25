@@ -7,7 +7,7 @@ import { WorkspacePremium } from "@mui/icons-material";
 import ChatDisplay from "./ChatDisplay";
 import OffsetContainer from "./OffsetContainer";
 import { useDispatch } from "react-redux";
-import { addMessage, fetchMessages } from "./features/messages/messagesSlice";
+import { addMessage } from "./features/messages/messagesSlice";
 import { MessageProps } from "./types";
 
 // Interface to define the type of channel object
@@ -88,10 +88,10 @@ export function ChatComponent({ user }: ChatComponentProps) {
   };
 
   return (
-    <div >
+    <div style={{ display: "flex", flexDirection: "column" }} >
       <h1>Test chat</h1>
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <p>Connected to channel:</p>
+        <p>Connected to:</p>
         <b>{channelName}</b>
         <div>
           <RoundedInput
@@ -101,7 +101,7 @@ export function ChatComponent({ user }: ChatComponentProps) {
             placeholder="Type a channel..."
           />
         </div>
-        <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Set channel</div>
+        <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
       </div>
       <OffsetContainer >
         <ChatDisplay user={user} />
