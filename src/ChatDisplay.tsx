@@ -54,8 +54,12 @@ function ChatDisplay({ user }: ChatDisplayProps) {
   };
 
   // Render loading or error states
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <div style={{ padding: "1rem", minHeight: "10rem" }}>
+    <p>Loading...</p>
+  </div>;
+  if (error) return <div style={{ padding: "1rem", minHeight: "10rem" }}>
+    <p>Error: {error}</p>
+  </div>;
 
   // Render the chat messages
   return (

@@ -61,7 +61,6 @@ function App() {
         padding: "1rem 2rem",
         display: "flex",
         flexDirection: "column",
-        background: "red",
         height: "100vh",  // Ensure the container takes the full height of the viewport
         justifyContent: "space-between"
       }}>
