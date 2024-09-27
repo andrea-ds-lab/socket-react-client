@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { store } from './app/store.ts'
 import { ThemeProvider } from '@mui/styles'
 import theme from './assets/theme.ts'
+import './css/global.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

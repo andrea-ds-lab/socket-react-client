@@ -54,10 +54,10 @@ function ChatDisplay({ user }: ChatDisplayProps) {
   };
 
   // Render loading or error states
-  if (loading) return <div style={{ padding: "1rem", minHeight: "10rem" }}>
+  if (loading) return <div style={{ padding: "1rem", height: "100%" }}>
     <p>Loading...</p>
   </div>;
-  if (error) return <div style={{ padding: "1rem", minHeight: "10rem" }}>
+  if (error) return <div style={{ padding: "1rem", height: "100%" }}>
     <p>Error: {error}</p>
   </div>;
 
@@ -67,7 +67,9 @@ function ChatDisplay({ user }: ChatDisplayProps) {
       className="chat-container"
       ref={chatContainerRef}
       style={{
-        maxHeight: '50vh',
+        display: "flex",
+        flexDirection: "column",
+        maxHeight: "60vh",
         overflowY: 'scroll',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
@@ -76,32 +78,35 @@ function ChatDisplay({ user }: ChatDisplayProps) {
     >
       {/* For WebKit browsers */}
       <style>
-        {`
+        {
+          `
           .chat-container::-webkit-scrollbar {
             display: none;
           }
         `}
-      </style>
+      </style >
       {/* Tombstone div to detect visibility */}
-      <div ref={tombstoneRef} style={{ display: "flex", justifyContent: "center" }}>
+      < div ref={tombstoneRef} style={{ display: "flex", justifyContent: "center" }}>
         <CircularProgress size={"2rem"} sx={{ color: "var(--highlight-color-light)" }} />
-      </div>
-      {messages.map((msg, index) => (
-        <Message
-          currentUser={user}
-          key={index}
-          id={msg.id}
-          body={msg.body}
-          user={msg.user}
-          boosted={msg.boosted}
-          channel={msg.channel}
-          inserted_at={msg.inserted_at}
-          updated_at={msg.updated_at}
-        />
-      ))}
+      </div >
+      {
+        messages.map((msg, index) => (
+          <Message
+            currentUser={user}
+            key={index}
+            id={msg.id}
+            body={msg.body}
+            user={msg.user}
+            boosted={msg.boosted}
+            channel={msg.channel}
+            inserted_at={msg.inserted_at}
+            updated_at={msg.updated_at}
+          />
+        ))
+      }
       {/* Empty div to act as a scroll target */}
       <div style={{ height: '1px' }} />
-    </div>
+    </div >
   );
 }
 

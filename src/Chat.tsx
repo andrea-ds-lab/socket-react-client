@@ -9,6 +9,8 @@ import OffsetContainer from "./OffsetContainer";
 import { useDispatch } from "react-redux";
 import { addMessage } from "./features/messages/messagesSlice";
 import { MessageProps } from "./types";
+import useIsMobile from "./IsMobole";
+import NewChat from "./NewChat";
 
 // Interface to define the type of channel object
 interface Channel {
@@ -30,6 +32,7 @@ export function ChatComponent({ user }: ChatComponentProps) {
   const [boostOn, setBoostOn] = useState<boolean>(false);
 
   const dispatch = useDispatch();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Cleanup previous channel before joining a new one
@@ -87,41 +90,46 @@ export function ChatComponent({ user }: ChatComponentProps) {
     // You can handle async operations here
   };
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }} >
-      <h1>Test chat</h1>
-      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <p>Connected to:</p>
-        <b>{channelName}</b>
-        <div>
-          <RoundedInput
-            value={newChannel}
-            onChange={(e) => setNewChannel(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a channel..."
-          />
-        </div>
-        <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
-      </div>
-      <OffsetContainer >
-        <ChatDisplay user={user} />
-      </OffsetContainer>
-      <div style={{ display: "flex", justifyContent: "end" }}>
-        <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: "1rem" }}>
-          <IconButton icon={<WorkspacePremium />} onClick={handleClick} />
-          <div style={{
-            background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", gap: 10
-          }}>
+  if (isMobile) {
+    return <NewChat user={user} />
+  } else {
+
+    return (
+      <div style={{ display: "flex", height: "100%", flexDirection: "column" }} >
+        <h1>Test chat</h1>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <p>Connected to:</p>
+          <b>{channelName}</b>
+          <div>
             <RoundedInput
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
+              value={newChannel}
+              onChange={(e) => setNewChannel(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message..."
+              placeholder="Type a channel..."
             />
-            <div className="rounded-button" onClick={sendMessage}>Send</div>
+          </div>
+          <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
+        </div>
+        <OffsetContainer >
+          <ChatDisplay user={user} />
+        </OffsetContainer>
+        <div style={{ display: "flex", justifyContent: "end" }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: "1rem" }}>
+            <IconButton icon={<WorkspacePremium />} onClick={handleClick} />
+            <div style={{
+              background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", gap: 10
+            }}>
+              <RoundedInput
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type a message..."
+              />
+              <div className="rounded-button" onClick={sendMessage}>Send</div>
+            </div>
           </div>
         </div>
-      </div>
-    </div >
-  );
+      </div >
+    );
+  }
 }
