@@ -12,10 +12,11 @@ interface ChatDisplayProps {
 
 function ChatDisplay({ user }: ChatDisplayProps) {
   const dispatch = useDispatch();
-  const { messages, loading, error } = useSelector((state: RootState) => state.messages);
+  const { messages, loading, error, lastMessagesAdded } = useSelector((state: RootState) => state.messages);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const tombstoneRef = useRef<HTMLDivElement | null>(null);
   const [tombstoneVisible, setTombstoneVisible] = useState(false);
+  const [showLoadingIcon, setShowLoadingIcon] = useState(true);
 
   // Scroll to the bottom of the messages on initial load
   useEffect(() => {
@@ -34,28 +35,40 @@ function ChatDisplay({ user }: ChatDisplayProps) {
       const isVisible =
         tombstoneRect.bottom >= containerRect.top &&
         tombstoneRect.top <= containerRect.bottom &&
-        tombstoneRect.height / 2 <= containerRect.bottom - tombstoneRect.top;
+        tombstoneRect.height <= containerRect.bottom - tombstoneRect.top;
 
       if (isVisible && !tombstoneVisible) {
         console.log('Tombstone is visible: Load more history');
 
         // Get current scroll position before loading new messages
         const currentScrollTop = chatContainerRef.current.scrollTop;
+
+        // Capture the current height of the container before new messages are added
         const currentHeight = chatContainerRef.current.scrollHeight;
+
+        if (lastMessagesAdded !== null && lastMessagesAdded.length === 0) {
+          console.log(lastMessagesAdded)
+          setShowLoadingIcon(false)
+        }
+
 
         // Dispatch the addHistory action
         dispatch(addHistory({ oldestId: messages.length > 0 ? messages[0].id : null, amount: MESSAGES_BATCH_SIZE }));
 
-        // After dispatching, adjust scroll position
+        // Adjust scroll position after messages are added
         setTimeout(() => {
           if (chatContainerRef.current) {
-            // New height of the container after messages are added
-            const newHeight = chatContainerRef.current.scrollHeight;
+            // Reset scroll to the top of the existing messages
+            chatContainerRef.current.scrollTop = 0;
 
-            // Maintain the scroll position
+            // Calculate the new height of the container after messages are added
+            const newHeight = chatContainerRef.current.scrollHeight;
+            console.log(newHeight)
+
+            // Maintain the scroll position at the top of the messages
             chatContainerRef.current.scrollTop = currentScrollTop + (newHeight - currentHeight);
           }
-        }, 0); // Timeout to ensure this runs after the state updates
+        }, 2000); // Timeout to ensure this runs after the state updates
         setTombstoneVisible(true); // Mark tombstone as visible
       } else if (!isVisible && tombstoneVisible) {
         setTombstoneVisible(false); // Mark tombstone as not visible
@@ -104,7 +117,7 @@ function ChatDisplay({ user }: ChatDisplayProps) {
         `}
       </style>
       {/* Tombstone div to detect visibility */}
-      <div ref={tombstoneRef} style={{ justifyContent: 'center', height: '2rem', background: 'yellow' }}>
+      <div ref={tombstoneRef} style={{ justifyContent: 'center', display: showLoadingIcon ? "flex" : "none", height: '2rem' }}>
         <CircularProgress size={'2rem'} sx={{ color: 'var(--highlight-color-light)' }} />
       </div>
       {/* Render messages dynamically */}

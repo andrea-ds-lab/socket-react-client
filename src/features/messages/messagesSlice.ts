@@ -6,12 +6,14 @@ interface MessagesState {
   messages: MessageProps[];
   loading: boolean;
   error: string | null;
+  lastMessagesAdded: MessageProps[] | null;
 }
 
 const initialState: MessagesState = {
   messages: [],
   loading: false,
   error: null,
+  lastMessagesAdded: null,
 };
 
 // Async thunk action for fetching messages
@@ -90,6 +92,7 @@ const messagesSlice = createSlice({
 
         // Prepend new messages to the existing ones and re-sort by id
         const allMessages = [...newMessages, ...state.messages];
+        state.lastMessagesAdded = newMessages;
         state.messages = allMessages.sort((a, b) => a.id - b.id);
       })
       .addCase(addHistory.rejected, (state, action) => {
