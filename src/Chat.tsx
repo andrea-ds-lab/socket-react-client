@@ -1,35 +1,21 @@
-import { useEffect, useState, KeyboardEvent, MouseEvent } from "react";
-import socket from "./socket";  // Ensure the correct path to your socket.js file
+import { useEffect, useState } from "react";
+// @ts-ignore
+import socket from "./socket";
 import './css/theme.css';
 import RoundedInput from "./RountedTextField";
-import IconButton from "./IconButton";
-import { WorkspacePremium } from "@mui/icons-material";
 import ChatDisplay from "./ChatDisplay";
 import OffsetContainer from "./OffsetContainer";
 import { useDispatch } from "react-redux";
 import { addMessage } from "./features/messages/messagesSlice";
-import { MessageProps } from "./types";
+import { Channel, ChatComponentProps, MessageProps } from "./types";
 import useIsMobile from "./IsMobole";
 import NewChat from "./NewChat";
 
-// Interface to define the type of channel object
-interface Channel {
-  leave: () => void;
-  join: () => { receive: (status: string, callback: (response: any) => void) => void };
-  on: (event: string, callback: (payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void) => void;
-  push: (event: string, payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void;
-}
-
-interface ChatComponentProps {
-  user: string;  // Properly define the username prop type
-}
 
 export function ChatComponent({ user }: ChatComponentProps) {
-  const [body, setBody] = useState<string>("");
   const [newChannel, setNewChannel] = useState<string>("");
   const [channelName, setChannelName] = useState<string>("lobby");
   const [channel, setChannel] = useState<Channel | null>(null);
-  const [boostOn, setBoostOn] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const isMobile = useIsMobile();
@@ -63,13 +49,6 @@ export function ChatComponent({ user }: ChatComponentProps) {
     };
   }, [channelName]);  // The effect runs only when `channelName` changes
 
-  const sendMessage = () => {
-    if (body.trim() !== "" && channel) {
-      channel.push("new_msg", { body: body, timestamp: Date.now(), user: user, boosted: boostOn, channel: channelName });
-      setBody("");  // Clear the message input after sending
-    }
-  };
-
   const handleChannelChange = () => {
     if (newChannel.trim() !== "") {
       setChannelName(newChannel.trim());
@@ -77,23 +56,16 @@ export function ChatComponent({ user }: ChatComponentProps) {
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();  // Prevent default Enter key behavior
-      sendMessage();  // Send the message on Enter key press
+  // Handle key down event to trigger channel change on Enter key
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleChannelChange();
     }
   };
 
-  const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
-    console.log("Click");
-    setBoostOn(!boostOn);
-    // You can handle async operations here
-  };
-
   if (isMobile) {
-    return <NewChat user={user} />
+    return <NewChat user={user} channelName={channelName} channelInstance={channel} />;
   } else {
-
     return (
       <div style={{ display: "flex", height: "100%", flexDirection: "column" }} >
         <h1>Test chat</h1>
@@ -104,32 +76,17 @@ export function ChatComponent({ user }: ChatComponentProps) {
             <RoundedInput
               value={newChannel}
               onChange={(e) => setNewChannel(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleKeyDown} // Use the new key down handler
               placeholder="Type a channel..."
             />
           </div>
           <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
         </div>
-        <OffsetContainer >
+        <OffsetContainer>
           <ChatDisplay user={user} />
         </OffsetContainer>
-        <div style={{ display: "flex", justifyContent: "end" }}>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: "1rem" }}>
-            <IconButton icon={<WorkspacePremium />} onClick={handleClick} />
-            <div style={{
-              background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", gap: 10
-            }}>
-              <RoundedInput
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type a message..."
-              />
-              <div className="rounded-button" onClick={sendMessage}>Send</div>
-            </div>
-          </div>
-        </div>
-      </div >
+      </div>
     );
   }
 }
+

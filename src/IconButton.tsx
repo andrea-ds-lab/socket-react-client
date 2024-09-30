@@ -11,7 +11,7 @@ const StyledButton = styled('button')<{ isActive: boolean }>(({ isActive }) => (
   color: '#E0E2DB', /* Text color */
   border: 'none',
   borderRadius: '50%', /* Fully rounded button */
-  padding: '10px',
+  padding: '0.5rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

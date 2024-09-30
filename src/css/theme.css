@@ -66,13 +66,6 @@ button:hover {
   background-color: darken(var(--highlight-color), 10%);
 }
 
-/* Example for containers */
-.container {
-  padding: 20px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
 /* Example for highlighted elements */
 .highlight {
   color: var(--highlight-color);
@@ -83,7 +76,7 @@ button:hover {
   color: white;
   height: 1rem;
   display: flex;
-  min-width: 3rem;
+  max-width: 5rem;
   border-radius: 1.5rem;
   padding: 0.5rem 1rem;
   align-items: center;
@@ -103,7 +96,6 @@ button:hover {
 }
 
 .chat-container {
-  background-color: var(--background-color);
   color: var(--text-color);
   border-radius: 8px;
   padding: 1rem;

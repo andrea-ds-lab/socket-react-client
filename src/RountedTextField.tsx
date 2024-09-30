@@ -1,20 +1,20 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
-import { TextField, InputAdornment } from '@mui/material';
+import { TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 // Define custom hook for styles
 const useStyles = makeStyles((theme) => ({
   roundedInput: {
     '& .MuiOutlinedInput-root': {
-      borderRadius: '1.5rem', // Rounded corners
-      color: "#fff", // Default text color
+      borderRadius: '1.5rem',
+      color: "#fff",
       height: "2rem",
-      transition: 'background-color 0.3s ease, height 0.3s ease', // Smooth transition for background and height changes
+      transition: 'background-color 0.3s ease, height 0.3s ease',
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: 'var(--text-color)', // Change this color to any you prefer
+        borderColor: 'var(--text-color)',
       },
       '&:hover fieldset': {
-        background: '#2222', // Border color on hover
+        background: '#2222',
       },
     },
 
@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
       color: 'red', // Label color when focused
       height: "2rem",
     },
-
     // Media query for mobile responsiveness
+    // @ts-ignore
     [theme.breakpoints.down('sm')]: { // Adjust according to your breakpoints
       '& .MuiOutlinedInput-root': {
         fontSize: '0.8rem', // Smaller font size for mobile devices
@@ -53,16 +53,10 @@ function RoundedInput({ value, onChange, onKeyDown, placeholder }: RoundedInputP
       fullWidth
       value={value}
       onChange={onChange}
-      onKeyDown={onKeyDown}
+      onKeyDown={onKeyDown} // Ensure this is included
       placeholder={placeholder}
       className={classes.roundedInput}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            {/* You can add any icons or elements here if needed */}
-          </InputAdornment>
-        ),
-      }}
+      style={{ width: "100%" }}
     />
   );
 }
