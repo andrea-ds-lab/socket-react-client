@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { SentimentSatisfied, SentimentVerySatisfied } from '@mui/icons-material';
+import { Group, SmartToy } from '@mui/icons-material';
 
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
@@ -38,9 +38,9 @@ function IconButton({ onClick, ...rest }: IconButtonProps) {
   return (
     <StyledButton isActive={isActive} onClick={handleClick} {...rest}>
       {isActive ? (
-        <SentimentVerySatisfied sx={{ color: 'var(--highlight-color-light)' }} />
+        <SmartToy sx={{ color: 'var(--highlight-color-light)' }} />
       ) : (
-        <SentimentSatisfied sx={{ color: '#E0E2DB' }} />
+        <Group sx={{ color: '#E0E2DB' }} />
       )}
     </StyledButton>
   );

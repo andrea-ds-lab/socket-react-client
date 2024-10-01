@@ -8,7 +8,7 @@ import OffsetContainer from "./OffsetContainer";
 import { useDispatch } from "react-redux";
 import { addMessage } from "./features/messages/messagesSlice";
 import { Channel, ChatComponentProps, MessageProps } from "./types";
-import useIsMobile from "./IsMobole";
+import useIsMobile from "./IsMobile";
 import NewChat from "./NewChat";
 
 
@@ -63,30 +63,27 @@ export function ChatComponent({ user }: ChatComponentProps) {
     }
   };
 
-  if (isMobile) {
-    return <NewChat user={user} channelName={channelName} channelInstance={channel} />;
-  } else {
-    return (
-      <div style={{ display: "flex", height: "100%", flexDirection: "column" }} >
-        <h1>Test chat</h1>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <p>Connected to:</p>
-          <b>{channelName}</b>
-          <div>
-            <RoundedInput
-              value={newChannel}
-              onChange={(e) => setNewChannel(e.target.value)}
-              onKeyDown={handleKeyDown} // Use the new key down handler
-              placeholder="Type a channel..."
-            />
-          </div>
-          <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
+  return <NewChat user={user} channelName={channelName} channelInstance={channel} />;
+  return (
+    <div style={{ display: "flex", height: "100%", flexDirection: "column" }} >
+      <h1>Test chat</h1>
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <p>Connected to:</p>
+        <b>{channelName}</b>
+        <div>
+          <RoundedInput
+            value={newChannel}
+            onChange={(e) => setNewChannel(e.target.value)}
+            onKeyDown={handleKeyDown} // Use the new key down handler
+            placeholder="Type a channel..."
+          />
         </div>
-        <OffsetContainer>
-          <ChatDisplay user={user} />
-        </OffsetContainer>
+        <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
       </div>
-    );
-  }
+      <OffsetContainer>
+        <ChatDisplay user={user} />
+      </OffsetContainer>
+    </div>
+  );
 }
 

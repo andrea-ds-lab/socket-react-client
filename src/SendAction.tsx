@@ -1,4 +1,3 @@
-import { WorkspacePremium } from "@mui/icons-material";
 import IconButton from "./IconButton";
 import RoundedInput from "./RountedTextField";
 import { KeyboardEvent, useState } from "react";
@@ -31,9 +30,7 @@ export function SendAction({ user, channelName, channelInstance }: SendActionPro
 
   return (
     <div id="send-action" style={{ display: "flex", width: "100%", gap: 10, background: "var(--highlight-color-light)", alignItems: "center", padding: "0.5rem" }}>
-      <IconButton onClick={handleClick} >
-        <WorkspacePremium />
-      </IconButton>
+      <IconButton onClick={handleClick} />
       <div style={{
         background: "var(--chat-message-bg-light)", padding: "0.5rem", borderRadius: "2rem", display: "flex", flexGrow: 1, gap: "1rem"
       }}>
