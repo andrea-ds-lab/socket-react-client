@@ -1,5 +1,7 @@
 import { MessageProps } from "./types";
 import './css/theme.css';
+import { SmartToy } from "@mui/icons-material";
+import { AI_MODEL_NAME } from "./config";
 
 
 interface MessageComponentProps extends MessageProps {
@@ -34,6 +36,41 @@ export function Message({ currentUser, id, body, user, boosted, channel, inserte
     }
   }
 
+  function getSpeakerIcon() {
+
+    if (!isSentByUser) {
+      if (user === AI_MODEL_NAME) {
+        return (
+          <div className="tooltip">
+            <SmartToy style={{ marginRight: "0.5rem" }} />
+            <span className="tooltiptext">{user}</span>
+          </div>
+        )
+      } else {
+        return (
+          <div className="tooltip">
+            <div style={{
+              width: '2rem',
+              height: '2rem',
+              borderRadius: '50%',
+              backgroundColor: '#8B2635',
+              color: '#FFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              marginRight: '0.5rem'
+            }}>
+              {firstLetter}
+              <span className="tooltiptext">{user}</span>
+            </div>
+          </div>
+        )
+      }
+    }
+  }
+
   return (
     <div style={{
       display: 'flex',
@@ -42,27 +79,7 @@ export function Message({ currentUser, id, body, user, boosted, channel, inserte
       marginBottom: '1rem',
       position: 'relative',
     }}>
-      {!isSentByUser && (
-        <div className="tooltip">
-
-          <div style={{
-            width: '2rem',
-            height: '2rem',
-            borderRadius: '50%',
-            backgroundColor: '#8B2635',
-            color: '#FFF',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            marginRight: '0.5rem'
-          }}>
-            {firstLetter}
-            <span className="tooltiptext">{user}</span>
-          </div>
-        </div>
-      )}
+      {getSpeakerIcon()}
       <div style={{
         maxWidth: '60%',
         minWidth: "2rem",
