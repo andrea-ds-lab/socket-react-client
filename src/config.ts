@@ -1,5 +1,5 @@
 // AI PARAMS
-export const AI_MODEL_NAME = "llama3-chatqa";
+export const AI_MODEL_NAME = "moondream" //"llama3-chatqa";
 
 // CHAT PARAMS
 export const LAST_MESSAGE: number = -1;

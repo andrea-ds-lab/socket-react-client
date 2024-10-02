@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ChatDisplay from "./ChatDisplay";
 import { SendAction } from "./SendAction";
 import { SendActionProps } from "./types";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +15,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
   const PADDING = "1rem"; // Define padding here
 
   const dispatch = useDispatch();
-  const { messages, loading, error, targetMessage } = useSelector((state: RootState) => state.messages);
+  const { messages, targetMessage } = useSelector((state: RootState) => state.messages);
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false); // Track initial load
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
 
@@ -43,6 +42,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
       console.log('Load more messages!', customEvent.detail.value)
       setIsFetchingHistory(true);
       console.log(messages, { amount: MESSAGES_BATCH_SIZE, oldestId: customEvent.detail.value })
+      // @ts-ignore
       dispatch(addHistory({ amount: MESSAGES_BATCH_SIZE, oldestId: customEvent.detail.value }))
     }
 

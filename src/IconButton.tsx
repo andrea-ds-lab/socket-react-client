@@ -7,22 +7,24 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
 }
 
 const StyledButton = styled('button')<{ isActive: boolean }>(({ isActive }) => ({
-  backgroundColor: '#4F5D4F',
-  color: '#E0E2DB', /* Text color */
+  backgroundColor: isActive ? '#FFD700' : '#4F5D4F',
+  backgroundImage: isActive ? 'radial-gradient(circle at 50% 50%, #FFF, #FFD700 80%)' : 'none',
+  color: '#E0E2DB',
   border: 'none',
-  borderRadius: '50%', /* Fully rounded button */
+  borderRadius: '50%',
   padding: '0.5rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '1.5rem', /* Adjust size for the icon */
+  fontSize: '1.5rem',
   cursor: 'pointer',
-  transition: 'background-color 0.3s ease, transform 0.6s ease', /* Updated transition */
-  width: '3rem', /* Fixed width for the button */
-  height: '3rem', /* Fixed height for the button */
-  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', /* Optional shadow for 3D effect */
+  transition: 'background-color 0.3s ease, transform 0.6s ease, box-shadow 0.3s ease',
+  width: '3rem',
+  height: '3rem',
+  boxShadow: isActive ? '0 0 1rem rgba(255, 215, 0, 0.8), inset 0 0 0.3rem rgba(255, 255, 255, 0.5)' : '0 0.25rem 0.5rem rgba(0, 0, 0, 0.2)',
   '&:hover': {
-    backgroundColor: '#3A4D40', /* Darker background on hover */
+    backgroundColor: isActive ? 'lightgoldenrodyellow' : '#3A4D40',
+    boxShadow: isActive ? '0 0 2rem rgba(255, 215, 0, 1), inset 0 0 5px rgba(255, 255, 255, 0.7)' : '0 4px 8px rgba(0, 0, 0, 0.2)',
   },
   transform: isActive ? 'rotateY(180deg) scale(1)' : 'rotateY(0deg) scale(0.9)',
 }));

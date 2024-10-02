@@ -12,7 +12,7 @@ interface TempChatProps {
 
 function TempChat({ user }: TempChatProps) {
   const dispatch = useDispatch();
-  const { messages, loading, error, lastMessagesAdded, targetMessage } = useSelector((state: RootState) => state.messages);
+  const { messages, loading, error, lastMessagesAdded } = useSelector((state: RootState) => state.messages);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const tombstoneRef = useRef<HTMLDivElement | null>(null);
   const [tombstoneVisible, setTombstoneVisible] = useState(false);
