@@ -2,6 +2,7 @@ import IconButton from "./IconButton";
 import RoundedInput from "./RountedTextField";
 import { KeyboardEvent, useState } from "react";
 import { SendActionProps } from "./types";
+import { EVENT_SCROLL_TO, LAST_MESSAGE } from "./config";
 
 export function SendAction({ user, channelName, channelInstance }: SendActionProps) {
 
@@ -16,15 +17,17 @@ export function SendAction({ user, channelName, channelInstance }: SendActionPro
   };
 
   const handleClick = async () => {
-    console.log(boostOn ? "Boost turned down" : "Boosted turned up");
+    console.log(boostOn ? "AI turned down" : "AI turned up");
     setBoostOn(!boostOn);
     // You can handle async operations here
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault();  // Prevent default Enter key behavior
-      sendMessage();  // Send the message on Enter key press
+      e.preventDefault();
+      sendMessage();
+      const scrollToEvent = new CustomEvent(EVENT_SCROLL_TO, { detail: { value: LAST_MESSAGE } });
+      window.dispatchEvent(scrollToEvent);
     }
   };
 

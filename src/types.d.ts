@@ -24,6 +24,12 @@ export interface ChatComponentProps {
   user: string;  // Properly define the username prop type
 }
 
+export interface ChatDisplayProps {
+  user: string,
+  messages: MessageProps[] | null,
+  targetMessage: number
+}
+
 export interface SendActionProps {
   user: string,
   channelName: string,

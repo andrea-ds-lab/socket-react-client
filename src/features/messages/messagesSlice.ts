@@ -7,6 +7,7 @@ interface MessagesState {
   loading: boolean;
   error: string | null;
   lastMessagesAdded: MessageProps[] | null;
+  targetMessage: number; // New targetMessage property
 }
 
 const initialState: MessagesState = {
@@ -14,6 +15,7 @@ const initialState: MessagesState = {
   loading: false,
   error: null,
   lastMessagesAdded: null,
+  targetMessage: -1,
 };
 
 // Async thunk action for fetching messages
@@ -66,6 +68,10 @@ const messagesSlice = createSlice({
       // Add the new message to the end of the messages array
       state.messages.push(action.payload);
     },
+    setTargetMessage: (state, action) => {
+      // Update targetMessage state
+      state.targetMessage = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -102,7 +108,7 @@ const messagesSlice = createSlice({
   },
 });
 
-// Export the action creator for adding a message
-export const { addMessage } = messagesSlice.actions;
+// Export the action creators
+export const { addMessage, setTargetMessage } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

@@ -3,10 +3,12 @@ import ChatDisplay from "./ChatDisplay";
 import { SendAction } from "./SendAction";
 import { SendActionProps } from "./types";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMessages } from "./features/messages/messagesSlice";
+import { addHistory, fetchMessages } from "./features/messages/messagesSlice";
 import { RootState } from "./app/store";
 import { IconButton } from '@mui/material';
 import { ArrowBack } from "@mui/icons-material";
+import MessagesDisplay from "./MessagesDisplay";
+import { EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, MESSAGES_BATCH_SIZE } from "./config";
 
 function NewChat({ user, channelName, channelInstance }: SendActionProps) {
   const TOP_BAR_HEIGHT = "4rem";
@@ -14,8 +16,9 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
   const PADDING = "1rem"; // Define padding here
 
   const dispatch = useDispatch();
-  const { messages, loading, error } = useSelector((state: RootState) => state.messages);
+  const { messages, loading, error, targetMessage } = useSelector((state: RootState) => state.messages);
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false); // Track initial load
+  const [isFetchingHistory, setIsFetchingHistory] = useState(false);
 
   useEffect(() => {
     // Load first messages batch when the chat is opened for the first time
@@ -27,6 +30,32 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
       });
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    const handleCustomEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      console.log('Received custom event:', customEvent.detail.value);
+    };
+
+    const handleLoadMoreMessage = (e: Event) => {
+      if (isFetchingHistory) return
+      const customEvent = e as CustomEvent;
+      console.log('Load more messages!', customEvent.detail.value)
+      setIsFetchingHistory(true);
+      console.log(messages, { amount: MESSAGES_BATCH_SIZE, oldestId: customEvent.detail.value })
+      dispatch(addHistory({ amount: MESSAGES_BATCH_SIZE, oldestId: customEvent.detail.value }))
+    }
+
+    window.addEventListener(EVENT_SCROLL_TO, handleCustomEvent as EventListener);
+    window.addEventListener(EVENT_LOAD_MORE_MESSAGES, handleLoadMoreMessage as EventListener);
+
+    return () => {
+      console.log("Removed event listener");
+      window.removeEventListener(EVENT_SCROLL_TO, handleCustomEvent as EventListener);
+      window.removeEventListener(EVENT_LOAD_MORE_MESSAGES, handleLoadMoreMessage as EventListener);
+
+    };
+  }, []);
 
   return (
     <div id="mobileChat" style={{ display: "flex", flexDirection: "column", background: "var(--background-color)", height: "100vh", boxSizing: "border-box" }}>
@@ -40,7 +69,9 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           padding: PADDING,
           boxSizing: "border-box",
           alignItems: "center",
-          gap: "1rem"
+          gap: "1rem",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          zIndex: 2,
         }}>
         <IconButton style={{ background: "var(--highlight-color)", width: "2rem", height: "100%", color: "white", fontSize: "1rem", margin: 0, padding: 0 }}>
           <ArrowBack style={{ width: "1rem" }} />
@@ -55,7 +86,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           display: "flex",
           width: "100%"
         }}>
-        <ChatDisplay user={user} />
+        <MessagesDisplay user={user} messages={messages} targetMessage={targetMessage} />
       </div>
       <div
         id="bottom-bar"
@@ -65,7 +96,9 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           width: "100%",
           background: "white",
           justifyContent: "center",
-          alignContent: "center"
+          alignContent: "center",
+          boxShadow: "0 -4px 8px rgba(0, 0, 0, 0.2)",
+          zIndex: 2,
         }}>
         <SendAction user={user} channelName={channelName} channelInstance={channelInstance} />
       </div>
