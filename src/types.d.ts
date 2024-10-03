@@ -21,7 +21,7 @@ export interface Channel {
 }
 
 export interface ChatComponentProps {
-  user: string;  // Properly define the username prop type
+  user: string | undefined;
 }
 
 export interface ChatDisplayProps {

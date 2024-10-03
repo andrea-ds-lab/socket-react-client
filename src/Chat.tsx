@@ -2,23 +2,18 @@ import { useEffect, useState } from "react";
 // @ts-ignore
 import socket from "./socket";
 import './css/theme.css';
-import RoundedInput from "./RountedTextField";
-import ChatDisplay from "./ChatDisplay";
-import OffsetContainer from "./OffsetContainer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addMessage } from "./features/messages/messagesSlice";
-import { Channel, ChatComponentProps, MessageProps } from "./types";
-import useIsMobile from "./IsMobile";
+import { Channel, MessageProps } from "./types";
 import NewChat from "./NewChat";
+import { RootState } from "./app/store";
 
-
-export function ChatComponent({ user }: ChatComponentProps) {
-  const [newChannel, setNewChannel] = useState<string>("");
+export function ChatComponent() {
   const [channelName, setChannelName] = useState<string>("lobby");
   const [channel, setChannel] = useState<Channel | null>(null);
 
+  const username = useSelector((state: RootState) => state.account.user?.name);
   const dispatch = useDispatch();
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Cleanup previous channel before joining a new one
@@ -49,41 +44,6 @@ export function ChatComponent({ user }: ChatComponentProps) {
     };
   }, [channelName]);  // The effect runs only when `channelName` changes
 
-  const handleChannelChange = () => {
-    if (newChannel.trim() !== "") {
-      setChannelName(newChannel.trim());
-      setNewChannel("");  // Clear the new channel input field
-    }
-  };
+  return <NewChat user={username ? username : "anonymous"} channelName={channelName} channelInstance={channel} />;
 
-  // Handle key down event to trigger channel change on Enter key
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleChannelChange();
-    }
-  };
-
-  return <NewChat user={user} channelName={channelName} channelInstance={channel} />;
-  return (
-    <div style={{ display: "flex", height: "100%", flexDirection: "column" }} >
-      <h1>Test chat</h1>
-      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <p>Connected to:</p>
-        <b>{channelName}</b>
-        <div>
-          <RoundedInput
-            value={newChannel}
-            onChange={(e) => setNewChannel(e.target.value)}
-            onKeyDown={handleKeyDown} // Use the new key down handler
-            placeholder="Type a channel..."
-          />
-        </div>
-        <div className="rounded-button" style={{ width: "10rem" }} onClick={handleChannelChange}>Change channel</div>
-      </div>
-      <OffsetContainer>
-        <ChatDisplay user={user} />
-      </OffsetContainer>
-    </div>
-  );
 }
-

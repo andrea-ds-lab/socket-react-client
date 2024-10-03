@@ -50,7 +50,6 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
     window.addEventListener(EVENT_LOAD_MORE_MESSAGES, handleLoadMoreMessage as EventListener);
 
     return () => {
-      console.log("Removed event listener");
       window.removeEventListener(EVENT_SCROLL_TO, handleCustomEvent as EventListener);
       window.removeEventListener(EVENT_LOAD_MORE_MESSAGES, handleLoadMoreMessage as EventListener);
 

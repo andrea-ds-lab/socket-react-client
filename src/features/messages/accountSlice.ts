@@ -52,6 +52,7 @@ export const fakeLogin = createAsyncThunk(
   'account/fakeLogin',
   async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
     const fakeUser: User = { id: 1, name: email, email: email }
+    console.log(fakeUser)
     return fakeUser; // Assuming the response contains user data
   }
 );

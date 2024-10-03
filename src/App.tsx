@@ -1,28 +1,30 @@
-import { useState } from "react"
-import { ChatComponent } from "./Chat"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ChatComponent } from "./Chat";
+import { PATH_GROUP_CHAT, PATH_LOGIN } from "./config";
+import LoginForm from "./LoginForm";
+import ProtectedRoute from "./ProtectedRoute"; // Import the protected route
 
-function App() {
-
-  const [username, setUsername] = useState("andrea")
+export function App() {
 
   return (
-    <div
-      id="app-container"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}>
-      <div style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
-        <div id="logged-user-container" style={{ display: "none", gap: "1rem", padding: "1rem", height: "1rem", alignItems: "center" }}>
-          <label htmlFor="username">Logged in as:</label>
-          <p><b>{username}</b></p>
-        </div>
-        <ChatComponent user={username} />
-      </div>
-    </div >
+    <Router>
+      <div id="app-container">
+        <Routes>
+          {/* Protect the group chat route */}
+          <Route
+            path={PATH_GROUP_CHAT}
+            element={<ProtectedRoute element={<ChatComponent />} />}
+          />
 
-  )
+          {/* The login route, accessible to everyone */}
+          <Route path={PATH_LOGIN} element={<LoginForm />} />
+
+          {/* Optionally, add a default route or 404 route */}
+          <Route path="*" element={<h1>404 - Page Not Found</h1>} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;
