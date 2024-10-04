@@ -4,7 +4,7 @@ import Message from "./Message"; // Assuming you have a Message component for re
 import { EVENT_LOAD_MORE_MESSAGES, LAST_MESSAGE } from "./config";
 import { CircularProgress } from "@mui/material";
 
-function ChatDisplay({ user, messages, targetMessage }: ChatDisplayProps) {
+function ChatDisplay({ user, messages, scrollTargetMessage }: ChatDisplayProps) {
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isAtTop, setIsAtTop] = useState<boolean>(false);
@@ -17,20 +17,20 @@ function ChatDisplay({ user, messages, targetMessage }: ChatDisplayProps) {
   }
 
   useEffect(() => {
-    if (targetMessage) {
-      if (targetMessage === LAST_MESSAGE) {
+    if (scrollTargetMessage) {
+      if (scrollTargetMessage === LAST_MESSAGE) {
         const lastMessageIndex = messages.length - 1;
         if (lastMessageIndex >= 0 && messageRefs.current[lastMessageIndex]) {
           messageRefs.current[lastMessageIndex]?.scrollIntoView({ behavior: "smooth" });
         }
       } else {
-        const targetIndex = messages.findIndex(msg => msg.id === targetMessage);
+        const targetIndex = messages.findIndex(msg => msg.id === scrollTargetMessage);
         if (targetIndex !== -1 && messageRefs.current[targetIndex]) {
           messageRefs.current[targetIndex]?.scrollIntoView({ behavior: "smooth" });
         }
       }
     }
-  }, [messages, targetMessage]);
+  }, [messages, scrollTargetMessage]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +48,7 @@ function ChatDisplay({ user, messages, targetMessage }: ChatDisplayProps) {
             setHasReachedTop(true);
 
             // Trigger evento custom per caricare più messaggi
+            console.log("Lunghezza messaggi: ", messages.length)
             const loadMoreEvent = new CustomEvent(EVENT_LOAD_MORE_MESSAGES, { detail: { value: messages.length > 0 ? messages[0].id : null } });
             window.dispatchEvent(loadMoreEvent);
           }

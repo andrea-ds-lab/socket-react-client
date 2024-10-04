@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SendAction } from "./SendAction";
 import { SendActionProps } from "./types";
 import { useDispatch, useSelector } from "react-redux";
-import { addHistory, fetchMessages } from "./features/messages/messagesSlice";
+import { addHistory, fetchMessages, setTargetMessage } from "./features/messages/messagesSlice";
 import { RootState } from "./app/store";
 import { IconButton } from '@mui/material';
 import { ArrowBack } from "@mui/icons-material";
@@ -17,7 +17,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { messages, targetMessage } = useSelector((state: RootState) => state.messages);
+  const { messages, scrollTargetMessage } = useSelector((state: RootState) => state.messages);
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false); // Track initial load
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
 
@@ -45,7 +45,9 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
       setIsFetchingHistory(true);
       console.log(messages, { amount: MESSAGES_BATCH_SIZE, oldestId: customEvent.detail.value })
       // @ts-ignore
-      dispatch(addHistory({ amount: MESSAGES_BATCH_SIZE, oldestId: customEvent.detail.value }))
+      dispatch(addHistory({ amount: MESSAGES_BATCH_SIZE }))
+      console.log(messages.filter(mex => mex.id === customEvent.detail.value))
+      dispatch(setTargetMessage(customEvent.detail.value))
     }
 
     window.addEventListener(EVENT_SCROLL_TO, handleCustomEvent as EventListener);
@@ -91,7 +93,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           display: "flex",
           width: "100%"
         }}>
-        <ChatDisplay user={user} messages={messages} targetMessage={targetMessage} />
+        <ChatDisplay user={user} messages={messages} scrollTargetMessage={scrollTargetMessage} />
       </div>
       <div
         id="bottom-bar"

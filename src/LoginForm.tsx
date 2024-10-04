@@ -41,7 +41,7 @@ function LoginForm() {
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2 className="login-title">Login</h2>
+        <h2 className="login-title">Access chat</h2>
         {error && <p className="error-message">{error}</p>} {/* Display error message if present */}
         <div className="input-group">
           <label htmlFor="username">Username</label>
@@ -63,7 +63,7 @@ function LoginForm() {
             required
           />
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <button type="submit" className="login-button">Sign in</button>
       </form>
     </div>
   );

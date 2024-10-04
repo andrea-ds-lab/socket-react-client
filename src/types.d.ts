@@ -27,11 +27,20 @@ export interface ChatMiddlewareProps {
 export interface ChatDisplayProps {
   user: string,
   messages: MessageProps[] | null,
-  targetMessage: number
+  scrollTargetMessage: number
 }
 
 export interface SendActionProps {
   user: string,
   channelName: string,
   channelInstance: Channel | null
+}
+
+export interface MessagesState {
+  messages: MessageProps[];
+  loading: boolean;
+  error: string | null;
+  lastMessagesAdded: MessageProps[] | null;
+  scrollTargetMessage: number;
+  oldestId: number;
 }
