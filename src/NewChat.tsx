@@ -7,7 +7,7 @@ import { RootState } from "./app/store";
 import { IconButton } from '@mui/material';
 import { ArrowBack } from "@mui/icons-material";
 import ChatDisplay from "./ChatDisplay";
-import { EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, MESSAGES_BATCH_SIZE, PATH_LOGIN } from "./config";
+import { EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, LAST_MESSAGE, MESSAGES_BATCH_SIZE, PATH_LOGIN } from "./config";
 import { useNavigate } from "react-router-dom";
 
 function NewChat({ user, channelName, channelInstance }: SendActionProps) {
@@ -35,7 +35,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
   useEffect(() => {
     const handleCustomEvent = (e: Event) => {
       const customEvent = e as CustomEvent;
-      console.log('Received custom event:', customEvent.detail.value);
+      dispatch(setTargetMessage(customEvent.detail.value))
     };
 
     const handleLoadMoreMessage = (e: Event) => {
