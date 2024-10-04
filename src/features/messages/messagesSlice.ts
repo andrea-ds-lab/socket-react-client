@@ -39,10 +39,6 @@ export const addHistory = createAsyncThunk(
     // Correctly type the full Redux store state
     const state = getState() as { messages: MessagesState };
 
-    // Access the 'messages' state
-    console.log("Stato aggiornato");
-    console.log(state.messages, state.messages.error, state.messages.loading, state.messages.oldestId, state.messages.scrollTargetMessage);
-
     try {
       const response = await fetch(`http://localhost:4000/api/messages?amount=${amount}&id=${state.messages.oldestId}`);
       if (!response.ok) {
@@ -50,8 +46,6 @@ export const addHistory = createAsyncThunk(
       }
       const data = await response.json();
       const messages = data.messages;
-      console.log(messages)
-
       // Sort the messages by id from lowest to highest before returning
       return messages.sort((a: MessageProps, b: MessageProps) => a.id - b.id);
     } catch (error: any) {
@@ -96,8 +90,6 @@ const messagesSlice = createSlice({
           state.scrollTargetMessage = LAST_MESSAGE;
           state.oldestId = messages[0].id
         }
-        console.log("Stato aggiornato")
-        console.log(state.messages, state.error, state.loading, state.oldestId, state.scrollTargetMessage)
       })
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loading = false;
@@ -110,9 +102,6 @@ const messagesSlice = createSlice({
       .addCase(addHistory.fulfilled, (state, action) => {
         state.loading = false;
         const newMessages: MessageProps[] = action.payload;
-
-        console.log("Pre-aggiornamento (addHistory)")
-        console.log(state.messages, state.error, state.loading, state.oldestId, state.scrollTargetMessage)
 
         if (newMessages.length > 0) {
           // Prepend new messages to the existing ones and re-sort by id
@@ -127,11 +116,6 @@ const messagesSlice = createSlice({
         } else {
           state.lastMessagesAdded = []
         }
-
-        console.log("Stato aggiornato (addHistory)")
-        console.log(state.messages, state.error, state.loading, state.oldestId, state.scrollTargetMessage)
-
-
       })
       .addCase(addHistory.rejected, (state, action) => {
         state.loading = false;

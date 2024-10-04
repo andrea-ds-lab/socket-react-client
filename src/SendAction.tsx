@@ -12,14 +12,13 @@ export function SendAction({ user, channelName, channelInstance }: SendActionPro
   const sendMessage = () => {
     if (body.trim() !== "" && channelInstance) {
       channelInstance.push("new_msg", { body: body, timestamp: Date.now(), user: user, boosted: boostOn, channel: channelName });
-      setBody("");  // Clear the message input after sending
+      setBody("");
     }
   };
 
   const handleClick = async () => {
     console.log(boostOn ? "AI turned down" : "AI turned up");
     setBoostOn(!boostOn);
-    // You can handle async operations here
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
