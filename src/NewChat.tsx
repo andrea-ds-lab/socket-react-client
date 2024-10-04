@@ -6,8 +6,9 @@ import { addHistory, fetchMessages } from "./features/messages/messagesSlice";
 import { RootState } from "./app/store";
 import { IconButton } from '@mui/material';
 import { ArrowBack } from "@mui/icons-material";
-import MessagesDisplay from "./MessagesDisplay";
-import { EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, MESSAGES_BATCH_SIZE } from "./config";
+import ChatDisplay from "./ChatDisplay";
+import { EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, MESSAGES_BATCH_SIZE, PATH_LOGIN } from "./config";
+import { useNavigate } from "react-router-dom";
 
 function NewChat({ user, channelName, channelInstance }: SendActionProps) {
   const TOP_BAR_HEIGHT = "4rem";
@@ -15,6 +16,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
   const PADDING = "1rem"; // Define padding here
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { messages, targetMessage } = useSelector((state: RootState) => state.messages);
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false); // Track initial load
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
@@ -56,6 +58,10 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
     };
   }, []);
 
+  const goBack = async () => {
+    navigate(PATH_LOGIN)
+  }
+
   return (
     <div id="mobileChat" style={{ display: "flex", flexDirection: "column", background: "var(--background-color)", height: "100vh", boxSizing: "border-box" }}>
       <div
@@ -72,7 +78,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
           zIndex: 2,
         }}>
-        <IconButton style={{ background: "var(--highlight-color)", width: "2rem", height: "100%", color: "white", fontSize: "1rem", margin: 0, padding: 0 }}>
+        <IconButton onClick={goBack} style={{ background: "var(--highlight-color)", width: "2rem", height: "100%", color: "white", fontSize: "1rem", margin: 0, padding: 0 }}>
           <ArrowBack style={{ width: "1rem" }} />
         </IconButton>
         <p>Current channel: <b>{channelName}</b></p>
@@ -85,7 +91,7 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           display: "flex",
           width: "100%"
         }}>
-        <MessagesDisplay user={user} messages={messages} targetMessage={targetMessage} />
+        <ChatDisplay user={user} messages={messages} targetMessage={targetMessage} />
       </div>
       <div
         id="bottom-bar"

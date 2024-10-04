@@ -20,7 +20,7 @@ export interface Channel {
   push: (event: string, payload: { body: string, timestamp: number, user: string, boosted: boolean, channel: string }) => void;
 }
 
-export interface ChatComponentProps {
+export interface ChatMiddlewareProps {
   user: string | undefined;
 }
 

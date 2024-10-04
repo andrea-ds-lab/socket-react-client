@@ -8,7 +8,7 @@ import { Channel, MessageProps } from "./types";
 import NewChat from "./NewChat";
 import { RootState } from "./app/store";
 
-export function ChatComponent() {
+export function ChatMiddleware({ }) {
   const [channelName, setChannelName] = useState<string>("lobby");
   const [channel, setChannel] = useState<Channel | null>(null);
 
@@ -47,3 +47,5 @@ export function ChatComponent() {
   return <NewChat user={username ? username : "anonymous"} channelName={channelName} channelInstance={channel} />;
 
 }
+
+export default ChatMiddleware;

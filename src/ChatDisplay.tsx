@@ -1,142 +1,121 @@
-import { useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { addHistory } from './features/messages/messagesSlice';
-import { RootState } from './app/store';
-import Message from './Message';
-import { CircularProgress } from '@mui/material';
-import { MESSAGES_BATCH_SIZE } from './config';
+import { useEffect, useRef, useState } from "react";
+import { ChatDisplayProps } from "./types";
+import Message from "./Message"; // Assuming you have a Message component for rendering individual messages
+import { EVENT_LOAD_MORE_MESSAGES, LAST_MESSAGE } from "./config";
+import { CircularProgress } from "@mui/material";
 
-interface ChatDisplayProps {
-  user: string;
-}
+function ChatDisplay({ user, messages, targetMessage }: ChatDisplayProps) {
+  const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isAtTop, setIsAtTop] = useState<boolean>(false);
+  const [lastEventTime, setLastEventTime] = useState<number>(0);
+  const [hasReachedTop, setHasReachedTop] = useState<boolean>(false);
+  const previousScrollTop = useRef<number>(0); // Per tracciare la direzione dello scroll
 
-function ChatDisplay({ user }: ChatDisplayProps) {
-  const dispatch = useDispatch();
-  const { messages, loading, error, lastMessagesAdded } = useSelector((state: RootState) => state.messages);
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const tombstoneRef = useRef<HTMLDivElement | null>(null);
-  const [tombstoneVisible, setTombstoneVisible] = useState(false);
-  const [showLoadingIcon, setShowLoadingIcon] = useState(true);
+  if (messages === null) {
+    return <div>Loading chat...</div>;
+  }
 
-  // Scroll to the bottom of the messages on initial load
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, []);
-
-  // Function to check if the tombstone is visible
-  const checkTombstoneVisibility = () => {
-    if (tombstoneRef.current && chatContainerRef.current) {
-      const tombstoneRect = tombstoneRef.current.getBoundingClientRect();
-      const containerRect = chatContainerRef.current.getBoundingClientRect();
-
-      // Check if the tombstone is at least 50% visible
-      const isVisible =
-        tombstoneRect.bottom >= containerRect.top &&
-        tombstoneRect.top <= containerRect.bottom &&
-        tombstoneRect.height <= containerRect.bottom - tombstoneRect.top;
-
-      if (isVisible && !tombstoneVisible) {
-        console.log('Tombstone is visible: Load more history');
-
-        // Get current scroll position before loading new messages
-        const currentScrollTop = chatContainerRef.current.scrollTop;
-
-        // Capture the current height of the container before new messages are added
-        const currentHeight = chatContainerRef.current.scrollHeight;
-
-        if (lastMessagesAdded !== null && lastMessagesAdded.length === 0) {
-          console.log(lastMessagesAdded)
-          setShowLoadingIcon(false)
+    if (targetMessage) {
+      if (targetMessage === LAST_MESSAGE) {
+        const lastMessageIndex = messages.length - 1;
+        if (lastMessageIndex >= 0 && messageRefs.current[lastMessageIndex]) {
+          messageRefs.current[lastMessageIndex]?.scrollIntoView({ behavior: "smooth" });
         }
-
-
-        // Dispatch the addHistory action
-        dispatch(addHistory({ oldestId: messages.length > 0 ? messages[0].id : null, amount: MESSAGES_BATCH_SIZE }));
-
-        // Adjust scroll position after messages are added
-        setTimeout(() => {
-          if (chatContainerRef.current) {
-            // Reset scroll to the top of the existing messages
-            chatContainerRef.current.scrollTop = 0;
-
-            // Calculate the new height of the container after messages are added
-            const newHeight = chatContainerRef.current.scrollHeight;
-            console.log(newHeight)
-
-            // Maintain the scroll position at the top of the messages
-            chatContainerRef.current.scrollTop = currentScrollTop + (newHeight - currentHeight);
-          }
-        }, 2000); // Timeout to ensure this runs after the state updates
-        setTombstoneVisible(true); // Mark tombstone as visible
-      } else if (!isVisible && tombstoneVisible) {
-        setTombstoneVisible(false); // Mark tombstone as not visible
+      } else {
+        const targetIndex = messages.findIndex(msg => msg.id === targetMessage);
+        if (targetIndex !== -1 && messageRefs.current[targetIndex]) {
+          messageRefs.current[targetIndex]?.scrollIntoView({ behavior: "smooth" });
+        }
       }
     }
-  };
+  }, [messages, targetMessage]);
 
-  // Handle user scroll events
-  const handleScroll = () => {
-    checkTombstoneVisibility();
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      const container = containerRef.current;
 
-  // Render loading or error states
-  if (loading) return (
-    <div style={{ padding: '1rem', height: '100%' }}>
-      <p>Loading...</p>
-    </div>
-  );
-  if (error) return (
-    <div style={{ padding: '1rem', height: '100%' }}>
-      <p>Error: {error}</p>
-    </div>
-  );
+      if (container) {
+        const currentScrollTop = container.scrollTop;
+        const currentTime = Date.now();
+
+        // Controlla se l'utente ha scrollato verso l'alto ed è in cima
+        if (currentScrollTop === 0 && previousScrollTop.current > currentScrollTop) {
+          if (!hasReachedTop && currentTime - lastEventTime > 5000) {
+            setIsAtTop(true);
+            setLastEventTime(currentTime);
+            setHasReachedTop(true);
+
+            // Trigger evento custom per caricare più messaggi
+            const loadMoreEvent = new CustomEvent(EVENT_LOAD_MORE_MESSAGES, { detail: { value: messages.length > 0 ? messages[0].id : null } });
+            window.dispatchEvent(loadMoreEvent);
+          }
+        } else if (currentScrollTop > 0) {
+          // Reset quando l'utente non è più in cima
+          setIsAtTop(false);
+          setHasReachedTop(false); // Permette di riemettere l'evento solo quando si torna in cima dall'alto
+        }
+
+        // Aggiorna il precedente valore di scrollTop
+        previousScrollTop.current = currentScrollTop;
+      }
+    };
+
+    const container = containerRef.current;
+
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [lastEventTime, hasReachedTop]);
 
   return (
-    <div
-      className="chat-container"
-      ref={chatContainerRef}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxHeight: '100%',
-        overflowY: 'scroll',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
-        width: '100%',
-      }}
-      onScroll={handleScroll} // Attach scroll handler
-    >
-      {/* For WebKit browsers */}
-      <style>
-        {`
-          .chat-container::-webkit-scrollbar {
-            display: none;
-          }
-        `}
-      </style>
-      {/* Tombstone div to detect visibility */}
-      <div ref={tombstoneRef} style={{ justifyContent: 'center', display: showLoadingIcon ? "flex" : "none", height: '2rem' }}>
-        <CircularProgress size={'2rem'} sx={{ color: 'var(--highlight-color-light)' }} />
-      </div>
-      {/* Render messages dynamically */}
-      {messages.map((msg) => (
-        <Message
-          currentUser={user}
-          key={msg.id}
-          id={msg.id}
-          body={msg.body}
-          user={msg.user}
-          boosted={msg.boosted}
-          channel={msg.channel}
-          inserted_at={msg.inserted_at}
-          updated_at={msg.updated_at}
-        />
-      ))}
-      {/* Empty div to act as a scroll target */}
-      <div style={{ height: '1rem' }} />
-    </div>
+    <div style={{ display: "flex", width: "100%", flexDirection: "column" }}>
+      {isAtTop ? (
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+          <CircularProgress size="2rem" style={{ color: 'var(--highlight-color-light)' }} />
+        </div>
+      ) : null}
+
+      <div
+        className="messages-display"
+        ref={containerRef}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: '100%',
+          overflowY: 'scroll',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          width: '100%',
+          padding: "1rem",
+          boxSizing: "border-box"
+        }}
+      >
+        {messages.map((msg, index) => (
+          <div
+            key={msg.id}
+            ref={(el) => (messageRefs.current[index] = el)}
+          >
+            <Message
+              currentUser={user}
+              id={msg.id}
+              body={msg.body}
+              user={msg.user}
+              boosted={msg.boosted}
+              channel={msg.channel}
+              inserted_at={msg.inserted_at}
+              updated_at={msg.updated_at}
+            />
+          </div>
+        ))}
+      </div></div>
   );
 }
 

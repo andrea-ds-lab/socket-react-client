@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ChatComponent } from "./Chat";
+import { ChatMiddleware } from "./ChatMiddleware";
 import { PATH_GROUP_CHAT, PATH_LOGIN } from "./config";
 import LoginForm from "./LoginForm";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route
@@ -13,7 +13,7 @@ export function App() {
           {/* Protect the group chat route */}
           <Route
             path={PATH_GROUP_CHAT}
-            element={<ProtectedRoute element={<ChatComponent />} />}
+            element={<ProtectedRoute element={<ChatMiddleware />} />}
           />
 
           {/* The login route, accessible to everyone */}
