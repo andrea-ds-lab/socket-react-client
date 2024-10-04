@@ -67,8 +67,14 @@ const messagesSlice = createSlice({
   initialState,
   reducers: {
     addMessage: (state, action) => {
-      // Add the new message to the end of the messages array
-      state.messages.push(action.payload);
+      const newMessage = action.payload;
+      const date = new Date(newMessage.timestamp);
+      // Define locally the inserted_at and updated_at values
+      newMessage.inserted_at = date.toISOString()
+      newMessage.updated_at = date.toISOString()
+      newMessage.id = newMessage.timestamp
+
+      state.messages.push(newMessage);
     },
     setTargetMessage: (state, action) => {
       // Update scrollTargetMessage state
@@ -111,9 +117,12 @@ const messagesSlice = createSlice({
         if (newMessages.length > 0) {
           // Prepend new messages to the existing ones and re-sort by id
           const allMessages = [...newMessages, ...state.messages];
-          state.lastMessagesAdded = newMessages;
           state.messages = allMessages.sort((a, b) => a.id - b.id);
+          // Store the batch of messages fetched
+          state.lastMessagesAdded = newMessages;
+          // Set the scroll to the last message available before loading the history
           state.scrollTargetMessage = state.oldestId
+          // Update the oldest message id
           state.oldestId = newMessages[0].id;
         } else {
           state.lastMessagesAdded = []

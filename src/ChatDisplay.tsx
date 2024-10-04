@@ -8,9 +8,8 @@ function ChatDisplay({ user, messages, scrollTargetMessage }: ChatDisplayProps) 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isAtTop, setIsAtTop] = useState<boolean>(false);
-  const [lastEventTime, setLastEventTime] = useState<number>(0);
   const [hasReachedTop, setHasReachedTop] = useState<boolean>(false);
-  const previousScrollTop = useRef<number>(0); // Per tracciare la direzione dello scroll
+  const previousScrollTop = useRef<number>(0); // To track scroll direction
 
   if (messages === null) {
     return <div>Loading chat...</div>;
@@ -38,27 +37,23 @@ function ChatDisplay({ user, messages, scrollTargetMessage }: ChatDisplayProps) 
 
       if (container) {
         const currentScrollTop = container.scrollTop;
-        const currentTime = Date.now();
 
-        // Controlla se l'utente ha scrollato verso l'alto ed è in cima
-        if (currentScrollTop === 0 && previousScrollTop.current > currentScrollTop) {
-          if (!hasReachedTop && currentTime - lastEventTime > 5000) {
-            setIsAtTop(true);
-            setLastEventTime(currentTime);
-            setHasReachedTop(true);
+        // Check if the user has scrolled to the top
+        if (currentScrollTop === 0 && !hasReachedTop) {
+          setIsAtTop(true);
+          setHasReachedTop(true);
 
-            // Trigger evento custom per caricare più messaggi
-            console.log("Lunghezza messaggi: ", messages.length)
-            const loadMoreEvent = new CustomEvent(EVENT_LOAD_MORE_MESSAGES, { detail: { value: messages.length > 0 ? messages[0].id : null } });
-            window.dispatchEvent(loadMoreEvent);
-          }
+          // Trigger custom event to load more messages
+          console.log("Number of messages: ", messages.length);
+          const loadMoreEvent = new CustomEvent(EVENT_LOAD_MORE_MESSAGES, { detail: { value: messages.length > 0 ? messages[0].id : null } });
+          window.dispatchEvent(loadMoreEvent);
         } else if (currentScrollTop > 0) {
-          // Reset quando l'utente non è più in cima
+          // Reset when the user is no longer at the top
           setIsAtTop(false);
-          setHasReachedTop(false); // Permette di riemettere l'evento solo quando si torna in cima dall'alto
+          setHasReachedTop(false);
         }
 
-        // Aggiorna il precedente valore di scrollTop
+        // Update previous scroll position
         previousScrollTop.current = currentScrollTop;
       }
     };
@@ -74,15 +69,15 @@ function ChatDisplay({ user, messages, scrollTargetMessage }: ChatDisplayProps) 
         container.removeEventListener("scroll", handleScroll);
       }
     };
-  }, [lastEventTime, hasReachedTop]);
+  }, [hasReachedTop, messages.length]);
 
   return (
     <div style={{ display: "flex", width: "100%", flexDirection: "column" }}>
-      {isAtTop ? (
+      {isAtTop && (
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
           <CircularProgress size="2rem" style={{ color: 'var(--highlight-color-light)' }} />
         </div>
-      ) : null}
+      )}
 
       <div
         className="messages-display"
@@ -100,10 +95,7 @@ function ChatDisplay({ user, messages, scrollTargetMessage }: ChatDisplayProps) 
         }}
       >
         {messages.map((msg, index) => (
-          <div
-            key={msg.id}
-            ref={(el) => (messageRefs.current[index] = el)}
-          >
+          <div key={msg.id} ref={(el) => (messageRefs.current[index] = el)}>
             <Message
               currentUser={user}
               id={msg.id}
@@ -116,7 +108,8 @@ function ChatDisplay({ user, messages, scrollTargetMessage }: ChatDisplayProps) 
             />
           </div>
         ))}
-      </div></div>
+      </div>
+    </div>
   );
 }
 
