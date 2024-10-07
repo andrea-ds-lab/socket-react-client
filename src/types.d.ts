@@ -48,4 +48,5 @@ export interface MessagesState {
 export interface MenuItemProps {
   name: string;
   icon: React.ComponentType<{ style?: React.CSSProperties }>;
+  path: string;
 }

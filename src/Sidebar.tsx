@@ -3,15 +3,16 @@ import './css/sidebar.css';
 import { MenuItemProps } from "./types";
 import { IconButton } from '@mui/material';
 import { Group, Home, LogoutOutlined, Menu, MenuOpen, Person, Star } from '@mui/icons-material';
-import { TOP_BAR_HEIGHT } from './config';
+import { PATH_GROUP_CHAT, TOP_BAR_HEIGHT } from './config';
 import { useDispatch } from 'react-redux';
 import { logout } from './features/messages/accountSlice';
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const dispatch = useDispatch()
-
+  const navigate = useNavigate()
 
   // Toggle sidebar open/collapse
   const toggleSidebar = () => {
@@ -24,24 +25,28 @@ function Sidebar() {
 
   const menuIconStyle = { color: 'var(--highlight-color-light)', width: "2rem", height: "2rem" }
 
-
   const menuItems: MenuItemProps[] = [
-    { name: "Home", icon: Home },
-    { name: "Group", icon: Group },
-    { name: "Single chat", icon: Person },
-    { name: "Favorites", icon: Star }
+    { name: "Home", icon: Home, path: "" },
+    { name: "Group", icon: Group, path: PATH_GROUP_CHAT },
+    { name: "Single chat", icon: Person, path: "" },
+    { name: "Favorites", icon: Star, path: "" }
   ]
+
+  async function handleNavigation(path: string) {
+    console.log("Ciao")
+    navigate(path)
+  }
 
   function getMenuItem(isMenuOpen: boolean, item: MenuItemProps, index: number) {
     if (isMenuOpen) {
       return <div className="menu-item" style={{ display: "flex", gap: "1rem" }}>
-        <IconButton key={index} >
+        <IconButton key={index} onClick={() => handleNavigation(item.path)} >
           <item.icon style={menuIconStyle} />
         </IconButton>
         {item.name}
       </div>
     } else {
-      return <IconButton key={index} ><item.icon style={menuIconStyle} /></IconButton>
+      return <IconButton key={index} onClick={() => handleNavigation(item.path)} ><item.icon style={menuIconStyle} /></IconButton>
     }
   }
 
