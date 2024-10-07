@@ -5,14 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { addHistory, fetchMessages, setTargetMessage } from "./features/messages/messagesSlice";
 import { RootState } from "./app/store";
 import { IconButton } from '@mui/material';
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Search } from "@mui/icons-material";
 import ChatDisplay from "./ChatDisplay";
-import { EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, LAST_MESSAGE, MESSAGES_BATCH_SIZE, PATH_LOGIN } from "./config";
+import { BOTTOM_BAR_HEIGHT, EVENT_LOAD_MORE_MESSAGES, EVENT_SCROLL_TO, MESSAGES_BATCH_SIZE, PATH_LOGIN, TOP_BAR_HEIGHT } from "./config";
 import { useNavigate } from "react-router-dom";
 
 function NewChat({ user, channelName, channelInstance }: SendActionProps) {
-  const TOP_BAR_HEIGHT = "4rem";
-  const BOTTOM_BAR_HEIGHT = "4rem";
   const PADDING = "1rem"; // Define padding here
 
   const dispatch = useDispatch();
@@ -80,10 +78,19 @@ function NewChat({ user, channelName, channelInstance }: SendActionProps) {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
           zIndex: 2,
         }}>
-        <IconButton onClick={goBack} style={{ background: "var(--highlight-color)", width: "2rem", height: "100%", color: "white", fontSize: "1rem", margin: 0, padding: 0 }}>
-          <ArrowBack style={{ width: "1rem" }} />
-        </IconButton>
-        <p>Current channel: <b>{channelName}</b></p>
+        <div style={{ display: "flex", height: "100%", width: "100%", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: "1rem", height: "100%", alignItems: "center" }}>
+            <IconButton onClick={goBack} style={{ background: "var(--highlight-color)", width: "2rem", height: "100%", color: "white", fontSize: "1rem", margin: 0, padding: 0 }}>
+              <ArrowBack style={{ width: "1rem" }} />
+            </IconButton>
+            <p>Current channel: <b>{channelName}</b></p>
+          </div>
+          <div>
+            <IconButton onClick={goBack} style={{ background: "var(--highlight-color)", width: "2rem", height: "100%", color: "white", fontSize: "1rem", margin: 0, padding: 0 }}>
+              <Search style={{ width: "1rem" }} />
+            </IconButton>
+          </div>
+        </div>
       </div>
       <div
         id="chat-content"

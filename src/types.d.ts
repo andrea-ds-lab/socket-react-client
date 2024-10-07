@@ -44,3 +44,8 @@ export interface MessagesState {
   scrollTargetMessage: number;
   oldestId: number;
 }
+
+export interface MenuItemProps {
+  name: string;
+  icon: React.ComponentType<{ style?: React.CSSProperties }>;
+}

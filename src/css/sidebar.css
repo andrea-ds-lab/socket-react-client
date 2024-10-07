@@ -1,0 +1,57 @@
+/* Import the theme variables from theme.css */
+@import './theme.css';
+
+/* Sidebar Container */
+.sidebar {
+  height: 100vh;
+  /* Full height */
+  width: 15rem;
+  /* Expanded width */
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: width 0.3s ease;
+  /* Smooth transition for width */
+  position: absolute;
+  /* Absolute positioning to overlay content */
+  z-index: 1000;
+  /* Ensure sidebar is above the content */
+}
+
+.sidebar.collapsed {
+  width: 5rem;
+  /* Collapsed width */
+}
+
+/* Toggle Button */
+.toggle-btn {
+  background-color: #777;
+  border: none;
+  color: white;
+  padding: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Menu Items */
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+  gap: 1rem;
+}
+
+.menu-item {
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s;
+  align-items: center;
+}
+
+.menu-item:hover {
+  background-color: #575757;
+  cursor: pointer;
+}
